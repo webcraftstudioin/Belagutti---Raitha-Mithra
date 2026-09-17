@@ -125,6 +125,25 @@ nav.desk a:hover{background:rgba(255,255,255,.14)}
 .hit small{display:block;color:var(--ink-soft);font-size:12px}
 .hit .go{margin-left:auto;color:var(--leaf);font-size:18px}
 
+.flist{display:flex;flex-direction:column;gap:10px;margin-bottom:4px}
+.frow{
+  display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:10px;box-shadow:var(--shadow);
+}
+.frow .thumb{width:74px;height:74px;flex:none;border-radius:12px;font-size:24px}
+.frow .fbody{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.frow .fbody b{font-size:14.5px;font-weight:600;line-height:1.25}
+.frow .fbody .who{font-size:12.5px;color:var(--ink-soft)}
+.frow .fbody .loc{font-size:12px;color:var(--ink-soft)}
+.frow .fbody .price{font-size:13px;font-weight:600;color:var(--leaf)}
+.frow .actions{display:flex;gap:8px;margin-top:7px}
+.frow .actions .btn{width:auto;padding:9px 14px;font-size:13px}
+@media(max-width:420px){
+  .frow{flex-wrap:wrap}
+  .frow .actions{width:100%}
+  .frow .actions .btn{flex:1}
+}
+
 /* ---------- Sections ---------- */
 main{max-width:1100px;margin:0 auto;padding:6px 14px 40px}
 section{padding:22px 0 4px;scroll-margin-top:calc(var(--hdr-h) + 80px)}
@@ -234,6 +253,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
   width:36px;height:36px;flex:none;border-radius:10px;background:var(--turmeric);color:#fff;
   display:grid;place-items:center;font-size:18px;
 }
+.alert .ah .clip.phone{background:var(--leaf)}
 .alert .ah b{font-size:14.5px;line-height:1.3}
 .alert ol{margin:0 0 10px;padding-left:20px;font-size:13.5px;line-height:1.9;color:var(--ink)}
 .alert ol li b{font-weight:700}
@@ -364,6 +384,8 @@ const T = {
   phone:{kn:'ಫೋನ್ ನಂಬರ್ (10 ಅಂಕಿ)',en:'Phone number (10 digits)'},
   need:{kn:'ಬೇಕಾದ ತರಕಾರಿ / ಹಣ್ಣು',en:'What you need'},
   qty:{kn:'ಪ್ರಮಾಣ (ಕೆ.ಜಿ.)',en:'Quantity (kg)'},
+  qtyGeneric:{kn:'ಪ್ರಮಾಣ',en:'Quantity'},
+  itemsPh:{kn:'ಉದಾ: ಪುಸ್ತಕ, ಪೆನ್ನು…',en:'e.g. Notebook, pens…'},
   delivery:{kn:'ವಿತರಣೆ ವಿಧಾನ',en:'Delivery mode'},
   pickup:{kn:'ನಾನೇ ಬಂದು ತೆಗೆದುಕೊಳ್ಳುತ್ತೇನೆ',en:'Pickup'},
   home:{kn:'ಮನೆಗೆ ಡೆಲಿವರಿ',en:'Home delivery'},
@@ -387,6 +409,19 @@ const T = {
   prescWarn:{kn:'⚠️ ಫೋಟೋ ಲಗತ್ತಿಸದಿದ್ದರೆ ವೈದ್ಯರಿಗೆ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ತಲುಪುವುದಿಲ್ಲ',en:"⚠️ If you skip this, the doctor won't receive your prescription"},
   copyNote:{kn:'ಜ್ಞಾಪನೆ ಪ್ರತಿ ಮಾಡಿ',en:'Copy reminder'},
   copied:{kn:'ಪ್ರತಿ ಆಗಿದೆ ✓',en:'Copied ✓'},
+
+  callHead:{kn:'ಕರೆ ಮಾಡುವಾಗ ಇದನ್ನು ಕೇಳಿ',en:'Ask these before you go'},
+  callStep1:{kn:'ವಸ್ತು ಸ್ಟಾಕ್‌ನಲ್ಲಿ ಇದೆಯೇ ಎಂದು ಕೇಳಿ',en:'Ask if the item is in stock'},
+  callStep2:{kn:'ಬೆಲೆ ಎಷ್ಟು ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ',en:'Confirm the price'},
+  callNote:{kn:'ಇದು ಅನಗತ್ಯ ಪ್ರಯಾಣ ಮತ್ತು ಸಮಯ ವ್ಯರ್ಥ ತಪ್ಪಿಸುತ್ತದೆ',en:'This saves an unnecessary trip and wasted time'},
+
+  reqTitle:{kn:'ವಸ್ತುಗಳ ಕೋರಿಕೆ',en:'Item request'},
+  itemsList:{kn:'ವಸ್ತುಗಳ ಪಟ್ಟಿ',en:'Items list'},
+  itemsListPh:{kn:'ಉದಾ: 2 ನೋಟ್‌ಬುಕ್, 5 ಪೆನ್ನು…',en:'e.g. 2 notebooks, 5 pens…'},
+  orPhoto:{kn:'ಅಥವಾ ನಿಮ್ಮ ಪಟ್ಟಿಯ ಫೋಟೋ ಆಯ್ಕೆ ಮಾಡಿ',en:'Or choose a photo of your list'},
+  sendReq:{kn:'ಕಳುಹಿಸಿ',en:'Send'},
+  eListOrPhoto:{kn:'ವಸ್ತುಗಳ ಪಟ್ಟಿ ಬರೆಯಿರಿ ಅಥವಾ ಫೋಟೋ ಆಯ್ಕೆ ಮಾಡಿ.',en:'Type your items list or choose a photo.'},
+  photoAttached:{kn:'📎 ಫೋಟೋ ಆಯ್ಕೆಯಾಗಿದೆ — ಕೆಳಗಿನ ಹಂತ ಅನುಸರಿಸಿ',en:'📎 Photo selected — follow the steps below'},
   sendMed:{kn:'ಮೆಡಿಕಲ್‌ಗೆ ಕಳುಹಿಸಿ',en:'Send to medical shop'},
 
   eFill:{kn:'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ವಿವರ ತುಂಬಿ.',en:'Please fill in every field.'},
@@ -420,86 +455,56 @@ const CROPS = {
 };
 
 const VEG = [
-  {kn:'ಟೊಮೇಟೊ',en:'Tomato',e:'🍅',farmer:{kn:'ರಮೇಶ್',en:'Ramesh'},loc:'Belagutti',img:'images/tomato.jpg',phone:'918095296727',rate:'₹25 / kg'},
-  {kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Malligenahalli',img:'images/onion.jpg',phone:'918217286041',rate:'₹30 / kg'},
-  {kn:'ಆಲೂಗಡ್ಡೆ',en:'Potato',e:'🥔',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'images/potato.jpg',phone:'917892443608',rate:'₹28 / kg'},
-  {kn:'ಕ್ಯಾರೆಟ್',en:'Carrot',e:'🥕',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'images/carrot.jpg',phone:'917019175379',rate:'₹35 / kg'},
-  {kn:'ಬದನೆಕಾಯಿ',en:'Brinjal',e:'🍆',farmer:{kn:'ಲೋಕೇಶ್',en:'Lokesh'},loc:'Belagutti',img:'images/brinjal.jpg',phone:'919148628502',rate:'₹22 / kg'},
-  {kn:'ಎಲೆಕೋಸು',en:'Cabbage',e:'🥬',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'images/cabbage.jpg',phone:'917353109581',rate:'₹20 / kg'}
+  {kn:'ಟೊಮೇಟೊ',en:'Tomato',e:'🍅',farmer:{kn:'ಅರುಣ್',en:'Arun'},loc:'Belagutti',img:'tomato.jpg',phone:'918217286041',rate:'₹25 / kg'},
+  {kn:'ಮೆಣಸಿನಕಾಯಿ',en:'Chilli',e:'🍅',farmer:{kn:'ಶಿವಕುಮಾರ್',en:'Shivakumar'},loc:'Guddehalli',img:'chilli.jpg',phone:'919845123670',rate:'₹27 / kg'},
+  {kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Malligenahalli',img:'onion.jpg',phone:'918217286041',rate:'₹30 / kg'},
+  {kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅',farmer:{kn:'ಪ್ರಕಾಶ್',en:'Prakash'},loc:'Belagutti',img:'onion.jpg',phone:'919980456712',rate:'₹32 / kg'},
+  {kn:'ಆಲೂಗಡ್ಡೆ',en:'Potato',e:'🥔',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'potato.jpg',phone:'917892443608',rate:'₹28 / kg'},
+  {kn:'ಕ್ಯಾರೆಟ್',en:'Carrot',e:'🥕',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'carrot.jpg',phone:'917019175379',rate:'₹35 / kg'},
+  {kn:'ಬದನೆಕಾಯಿ',en:'Brinjal',e:'🍆',farmer:{kn:'ಲೋಕೇಶ್',en:'Lokesh'},loc:'Belagutti',img:'brinjal.jpg',phone:'919148628502',rate:'₹22 / kg'},
+  {kn:'ಎಲೆಕೋಸು',en:'Cabbage',e:'🥬',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'cauli.jpg',phone:'917353109581',rate:'₹20 / kg'}
 ];
 const FRUIT = [
-  {kn:'ಮಾವು',en:'Mango',e:'🥭',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Belagutti',img:'images/mango.jpg',phone:'919606778356',rate:'₹60 / kg'},
-  {kn:'ಬಾಳೆಹಣ್ಣು',en:'Banana',e:'🍌',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'images/banana.jpg',phone:'919902872691',rate:'₹40 / dozen'},
-  {kn:'ಸೇಬು',en:'Apple',e:'🍎',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'images/apple.jpg',phone:'919008239032',rate:'₹120 / kg'},
-  {kn:'ಕಿತ್ತಳೆ',en:'Orange',e:'🍊',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'images/orange.jpg',phone:'918217679427',rate:'₹70 / kg'}
+  {kn:'ಮಾವು',en:'Mango',e:'🥭',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Belagutti',img:'mango.jpg',phone:'919606778356',rate:'₹60 / kg'},
+  {kn:'ಮಾವು',en:'Mango',e:'🥭',farmer:{kn:'ಗೋಪಾಲ್',en:'Gopal'},loc:'Jeenahalli',img:'mango.jpg',phone:'919742081563',rate:'₹55 / kg'},
+  {kn:'ಬಾಳೆಹಣ್ಣು',en:'Banana',e:'🍌',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'banana.jpg',phone:'919902872691',rate:'₹40 / dozen'},
+  {kn:'ಪಪ್ಪಾಯಿ',en:'Papaya',e:'🍎',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'pappaya.jpg',phone:'919008239032',rate:'₹120 / kg'},
+  {kn:'ಕಲ್ಲಂಗಡಿ',en:'Watermelon',e:'🍊',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'watermelon.jpg',phone:'918217679427',rate:'₹70 / kg'}
 ];
 
 const STATIONARY = [
-  {kn:'ಶ್ರೀ ಗಣೇಶ್ ಸ್ಟೇಷನರಿ',en:'Sri Ganesh Stationery',e:'✏️',loc:'Belagutti',img:'images/stationary.jpg',phone:'919916118623',
+  {kn:'ಶ್ರೀ ಗಣೇಶ್ ಸ್ಟೇಷನರಿ',en:'Sri Ganesh Stationery',e:'✏️',loc:'Belagutti',img:'images/stationary.jpg',phone:'917892443608',
    owner:{kn:'ಗಣೇಶ್',en:'Ganesh'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 8 – ರಾತ್ರಿ 9',en:'8 AM – 9 PM'},
    items:{kn:'ಪುಸ್ತಕ, ಪೆನ್ನು, ನೋಟ್‌ಬುಕ್, ಜೆರಾಕ್ಸ್, ಸ್ಕೂಲ್ ಬ್ಯಾಗ್',en:'Books, pens, notebooks, xerox, school bags'}},
-  {kn:'ಅನ್ನಪೂರ್ಣ ಕಿರಾಣಿ ಅಂಗಡಿ',en:'Annapoorna Provision Store',e:'🛒',loc:'Belagutti',img:'images/grocery.jpg',phone:'919916118623',
-   owner:{kn:'ಶಿವಣ್ಣ',en:'Shivanna'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 7 – ರಾತ್ರಿ 9',en:'7 AM – 9 PM'},
-   items:{kn:'ಅಕ್ಕಿ, ಬೇಳೆ, ಎಣ್ಣೆ, ಮಸಾಲೆ, ತಿಂಡಿ ಪದಾರ್ಥ',en:'Rice, dal, oil, masala, snacks'}},
   {kn:'ಬೆಳಗುತ್ತಿ ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್',en:'Belagutti Electronics',e:'🔌',loc:'Belagutti',img:'images/electronics.jpg',phone:'919916118623',
    owner:{kn:'ನಾಗರಾಜ್',en:'Nagaraj'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 9 – ರಾತ್ರಿ 8',en:'9 AM – 8 PM'},
    items:{kn:'ಬಲ್ಬ್, ವೈರ್, ಮೊಬೈಲ್ ಚಾರ್ಜರ್, ರಿಪೇರಿ',en:'Bulbs, wiring, mobile chargers, repairs'}}
 ];
 
 const HOTELS = [
-  {kn:'ಶ್ರೀ ಲಕ್ಷ್ಮೀ ಖಾನಾವಳಿ',en:'Sri Lakshmi Khanavali',e:'🍛',loc:'Belagutti',img:'images/hotel1.jpg',phone:'919916118623',
-   timing:{kn:'ಬೆಳಿಗ್ಗೆ 7 – ರಾತ್ರಿ 10',en:'7 AM – 10 PM'},
-   food:{kn:'ಇಡ್ಲಿ, ದೋಸೆ, ಊಟ (ರೈಸ್ ಬಾತ್), ಚಪಾತಿ',en:'Idli, dosa, full meals, chapati'}},
-  {kn:'ಅಣ್ಣಪ್ಪ ಟೀ ಸ್ಟಾಲ್',en:'Annappa Tea Stall',e:'☕',loc:'Belagutti',img:'images/hotel2.jpg',phone:'919916118623',
-   timing:{kn:'ಬೆಳಿಗ್ಗೆ 6 – ರಾತ್ರಿ 9',en:'6 AM – 9 PM'},
-   food:{kn:'ಚಹಾ, ಕಾಫಿ, ಬಜ್ಜಿ, ಮಿರ್ಚಿ, ಗೋಳಿಬಜೆ',en:'Tea, coffee, bajji, mirchi, goli bajje'}},
-  {kn:'ಗ್ರಾಮ ರುಚಿ ಹೋಟೆಲ್',en:'Grama Ruchi Hotel',e:'🍲',loc:'Belagutti',img:'images/hotel3.jpg',phone:'919916118623',
-   timing:{kn:'ಮಧ್ಯಾಹ್ನ 11 – ರಾತ್ರಿ 10',en:'11 AM – 10 PM'},
-   food:{kn:'ಉತ್ತರ ಕರ್ನಾಟಕ ಊಟ, ರೊಟ್ಟಿ, ಎಣ್ಣೆಗಾಯಿ',en:'North Karnataka meals, jolada rotti, ennegayi'}}
+  {kn:'ಶ್ರೀ ಲಕ್ಷ್ಮೀ ಖಾನಾವಳಿ',en:'Sri Lakshmi Khanavali',e:'🍛',loc:'Belagutti',img:'images/hotel1.jpg',phone:'918217746004',
+   timing:{kn:'ಬೆಳಿಗ್ಗೆ 7 – ರಾತ್ರಿ 8',en:'7 AM – 8 PM'},
+   food:{kn:'ಇಡ್ಲಿ, ದೋಸೆ, ಊಟ (ರೈಸ್ ಬಾತ್), ಚಪಾತಿ',en:'Idli, dosa, full meals, chapati'}}
 ];
 
 const TEMPLES = [
-  {kn:'ಶ್ರೀ ಆಂಜನೇಯ ಸ್ವಾಮಿ ದೇವಸ್ಥಾನ',en:'Sri Anjaneya Swamy Temple',e:'🛕',loc:'Belagutti',img:'images/temple1.jpg',phone:'919916118623',
-   map:'https://maps.google.com/?q=Belagutti',
-   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 6–11, ಸಂಜೆ 5–8 · ಶನಿವಾರ ವಿಶೇಷ ಪೂಜೆ',en:'6–11 AM, 5–8 PM · Special pooja on Saturdays'},
-   about:{kn:'ಊರಿನ ಪ್ರಮುಖ ದೇವಸ್ಥಾನ. ಹನುಮ ಜಯಂತಿ ಮತ್ತು ವಾರ್ಷಿಕ ಜಾತ್ರೆ ಇಲ್ಲಿ ನಡೆಯುತ್ತದೆ.',en:'The main temple of the village. Hanuma Jayanti and the annual jatre are held here.'}},
-  {kn:'ಶ್ರೀ ಬಸವೇಶ್ವರ ದೇವಸ್ಥಾನ',en:'Sri Basaveshwara Temple',e:'🛕',loc:'Malligenahalli',img:'images/temple2.jpg',phone:'919916118623',
-   map:'https://maps.google.com/?q=Malligenahalli',
-   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 6–10, ಸಂಜೆ 6–8 · ಸೋಮವಾರ ರುದ್ರಾಭಿಷೇಕ',en:'6–10 AM, 6–8 PM · Rudrabhisheka on Mondays'},
-   about:{kn:'ಶಿವರಾತ್ರಿಯಂದು ದೊಡ್ಡ ಉತ್ಸವ ನಡೆಯುತ್ತದೆ.',en:'A large festival is held here on Shivaratri.'}},
-  {kn:'ಶ್ರೀ ದುರ್ಗಾ ಪರಮೇಶ್ವರಿ ದೇವಸ್ಥಾನ',en:'Sri Durga Parameshwari Temple',e:'🛕',loc:'Guddehalli',img:'images/temple3.jpg',phone:'919916118623',
-   map:'https://maps.google.com/?q=Guddehalli',
-   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 7–11, ಸಂಜೆ 5–7 · ಶುಕ್ರವಾರ ಕುಂಕುಮಾರ್ಚನೆ',en:'7–11 AM, 5–7 PM · Kumkumarchane on Fridays'},
-   about:{kn:'ಹರಕೆ ಮತ್ತು ವಿಶೇಷ ಪೂಜೆಗಳಿಗೆ ಮೊದಲೇ ಅರ್ಚಕರಿಗೆ ಕರೆ ಮಾಡಿ.',en:'Call the archaka in advance for harake and special poojas.'}},
-  {kn:'ಶ್ರೀ ಮಾರಮ್ಮ ದೇವಸ್ಥಾನ',en:'Sri Maramma Temple',e:'🛕',loc:'Jeenahalli',img:'images/temple4.jpg',phone:'919916118623',
-   map:'https://maps.google.com/?q=Jeenahalli',
-   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 6–10, ಸಂಜೆ 6–8 · ಮಂಗಳವಾರ ವಿಶೇಷ',en:'6–10 AM, 6–8 PM · Special on Tuesdays'},
-   about:{kn:'ಪ್ರತಿ ವರ್ಷ ಊರ ಹಬ್ಬ ಇಲ್ಲಿ ಆಚರಿಸಲಾಗುತ್ತದೆ.',en:'The village festival is celebrated here every year.'}}
-];
-
-const SCHOOLS = [
-  {kn:'ಸರ್ಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ',en:'Govt. Higher Primary School',e:'🏫',loc:'Belagutti',img:'images/school1.jpg',phone:'919916118623',
-   about:{kn:'1ರಿಂದ 8ನೇ ತರಗತಿ · ಕನ್ನಡ ಮಾಧ್ಯಮ · ಉಚಿತ ಶಿಕ್ಷಣ ಮತ್ತು ಬಿಸಿಯೂಟ',en:'Classes 1–8 · Kannada medium · Free education and midday meals'},
-   act:{kn:'ಕ್ರೀಡೆ, ಪ್ರತಿಭಾ ಕಾರಂಜಿ, ವಾರ್ಷಿಕೋತ್ಸವ, ಗ್ರಂಥಾಲಯ',en:'Sports, Pratibha Karanji, annual day, library'}},
-  {kn:'ಸರ್ಕಾರಿ ಪ್ರೌಢಶಾಲೆ',en:'Govt. High School',e:'🎓',loc:'Belagutti',img:'images/school2.jpg',phone:'919916118623',
-   about:{kn:'8ರಿಂದ 10ನೇ ತರಗತಿ · ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್ · ವಿಜ್ಞಾನ ಪ್ರಯೋಗಾಲಯ',en:'Classes 8–10 · Kannada and English · Science lab'},
-   act:{kn:'ಎನ್‌ಎಸ್‌ಎಸ್, ವಿಜ್ಞಾನ ಮೇಳ, ಕಂಪ್ಯೂಟರ್ ತರಗತಿ',en:'NSS, science fair, computer classes'}},
-  {kn:'ಸೇಂಟ್ ಮೇರಿಸ್ ಇಂಗ್ಲಿಷ್ ಸ್ಕೂಲ್',en:"St. Mary's English School",e:'📚',loc:'Belagutti',img:'images/school3.jpg',phone:'919916118623',
-   about:{kn:'ಎಲ್‌ಕೆಜಿಯಿಂದ 7ನೇ ತರಗತಿ · ಇಂಗ್ಲಿಷ್ ಮಾಧ್ಯಮ · ಬಸ್ ಸೌಲಭ್ಯ ಇದೆ',en:'LKG to Class 7 · English medium · School bus available'},
-   act:{kn:'ಯೋಗ, ನೃತ್ಯ, ಚಿತ್ರಕಲೆ, ಕ್ರೀಡಾಕೂಟ',en:'Yoga, dance, drawing, sports day'}}
+  {kn:'ಶ್ರೀ ತೀರ್ಥ ರಾಮೇಶ್ವರ ದೇವಸ್ಥಾನ',en:'Shree Theertha Rameshwara Temple',e:'🛕',loc:'Belagutti',img:'temple.jpg',phone:'919916118623',
+   map:'https://maps.app.goo.gl/JScBEukJ9YqQGRBc9',
+   pooja:{kn:'ಪೂಜೆ ಸಮಯದ ಮಾಹಿತಿಗೆ ಅರ್ಚಕರಿಗೆ ಕರೆ ಮಾಡಿ',en:'Call the archaka for pooja timing details'},
+   about:{kn:'ಊರಿನ ಪ್ರಮುಖ ದೇವಸ್ಥಾನಗಳಲ್ಲಿ ಒಂದು.',en:'One of the village\'s important temples.'}},
+  {kn:'ಶ್ರೀ ದುರ್ಗಮ್ಮ ದೇವಸ್ಥಾನ',en:'Shree Durgamma Temple',e:'🛕',loc:'Belagutti',img:'images/temple2.jpg',phone:'919916118623',
+   map:'https://maps.app.goo.gl/bA2rYQWwe4mfA96CA',
+   pooja:{kn:'ಪೂಜೆ ಸಮಯದ ಮಾಹಿತಿಗೆ ಅರ್ಚಕರಿಗೆ ಕರೆ ಮಾಡಿ',en:'Call the archaka for pooja timing details'},
+   about:{kn:'ಗ್ರಾಮ ದೇವತೆಯ ದೇವಸ್ಥಾನ.',en:'Temple of the village deity.'}},
+  {kn:'ಕಲ್ಬಿಗಿರಿ ರಂಗನಾಥ ಸ್ವಾಮಿ ದೇವಸ್ಥಾನ',en:'Kalbigiri Ranganatha Swamy Temple',e:'🛕',loc:'Belagutti',img:'images/temple3.jpg',phone:'919916118623',
+   map:'https://maps.app.goo.gl/zPEkEneVjZWQpmkG7',
+   pooja:{kn:'ಪೂಜೆ ಸಮಯದ ಮಾಹಿತಿಗೆ ಅರ್ಚಕರಿಗೆ ಕರೆ ಮಾಡಿ',en:'Call the archaka for pooja timing details'},
+   about:{kn:'ಶ್ರೀ ರಂಗನಾಥ ಸ್ವಾಮಿಗೆ ಸಮರ್ಪಿತವಾದ ದೇವಸ್ಥಾನ.',en:'A temple dedicated to Sri Ranganatha Swamy.'}}
 ];
 
 const HOSPITALS = [
-  {kn:'ಸರ್ಕಾರಿ ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ',en:'Govt. Primary Health Centre',e:'🏥',loc:'Belagutti',img:'images/hospital1.jpg',
-   type:'govt',phone:'919916118623',
-   doctor:{kn:'ಡಾ. ಶ್ರೀಧರ್',en:'Dr. Sridhar'},desig:{kn:'ವೈದ್ಯಾಧಿಕಾರಿ (MBBS)',en:'Medical Officer (MBBS)'},
-   about:{kn:'24×7 ತುರ್ತು ಸೇವೆ · ಲಸಿಕೆ · ಹೆರಿಗೆ ಸೌಲಭ್ಯ · ಉಚಿತ ಔಷಧಿ',en:'24×7 emergency · vaccination · delivery facility · free medicines'}},
-  {kn:'ಶ್ರೀ ಸಾಯಿ ಕ್ಲಿನಿಕ್ ಮತ್ತು ಮೆಡಿಕಲ್',en:'Sri Sai Clinic & Medicals',e:'💊',loc:'Belagutti',img:'images/hospital2.jpg',
-   type:'private',phone:'919916118623',medPhone:'919916118623',
-   doctor:{kn:'ಡಾ. ಪ್ರಕಾಶ್',en:'Dr. Prakash'},desig:{kn:'ಜನರಲ್ ಫಿಸಿಷಿಯನ್ (MBBS, MD)',en:'General Physician (MBBS, MD)'},
-   about:{kn:'ಬೆಳಿಗ್ಗೆ 9–1, ಸಂಜೆ 5–8 · ಮೆಡಿಕಲ್ ಅಂಗಡಿ ಇದೇ ಕಟ್ಟಡದಲ್ಲಿ',en:'9 AM–1 PM, 5–8 PM · Medical shop in the same building'}},
-  {kn:'ಆಶಾ ಕ್ಲಿನಿಕ್ ಮತ್ತು ಮೆಡಿಕಲ್ ಸ್ಟೋರ್',en:'Asha Clinic & Medical Store',e:'🩺',loc:'Belagutti',img:'images/hospital3.jpg',
-   type:'private',phone:'919916118623',medPhone:'919916118623',
+  {kn:'ಸರ್ಕಾರಿ ಆಸ್ಪತ್ರೆ',en:'Government Hospital',e:'🏥',loc:'Belagutti',img:'hospital.jpg',
+   type:'govt',phone:'919916118623',medPhone:'919916118623',
    doctor:{kn:'ಡಾ. ಸವಿತಾ',en:'Dr. Savitha'},desig:{kn:'ಮಕ್ಕಳ ತಜ್ಞೆ (MBBS, DCH)',en:'Paediatrician (MBBS, DCH)'},
    about:{kn:'ಬೆಳಿಗ್ಗೆ 10–2, ಸಂಜೆ 6–9 · ಮಕ್ಕಳ ಚಿಕಿತ್ಸೆ ಮತ್ತು ಲಸಿಕೆ',en:'10 AM–2 PM, 6–9 PM · Child care and vaccination'}}
 ];
@@ -510,7 +515,6 @@ const SECTIONS = [
   {id:'stationary',title:'statT',ic:'✏️'},
   {id:'hotels',    title:'hotelT',ic:'🍛'},
   {id:'temples',   title:'templeT',ic:'🛕'},
-  {id:'schools',   title:'schoolT',ic:'🏫'},
   {id:'hospital',  title:'hospT',ic:'🏥'}
 ];
 
@@ -541,6 +545,21 @@ function gallery(item){
 }
 const kv = (label, val) => `<div class="kv"><span>${label}</span><b>${val}</b></div>`;
 const call = p => { window.location.href = 'tel:+' + p; };
+
+function farmerRow(d, i, kind){
+  return `<div class="frow">
+    ${thumb(d, i)}
+    <div class="fbody">
+      <b>${esc(L(d))}</b>
+      <span class="who">${t('farmer')}: ${esc(L(d.farmer))}</span>
+      <span class="loc">📍 ${vName(d.loc)}</span>
+      <div class="actions">
+        <button class="btn wa" onclick="openOrder('${kind}',${i})">🟢 ${t('order')}</button>
+        <button class="btn call" onclick="call('${d.phone}')">📞 ${t('call')}</button>
+      </div>
+    </div>
+  </div>`;
+}
 
 /* =====================================================================
    4. LANGUAGE + NAV
@@ -574,12 +593,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); 
    5. HERO CAROUSEL
    ===================================================================== */
 const SLIDES = [
-  {e:'🌾',img:'images/hero1.jpg',kn:['ನಮ್ಮ ಊರಿನ ಬೆಳೆ, ನಿಮ್ಮ ಮನೆಗೆ','ರೈತರಿಂದ ನೇರವಾಗಿ — ಮಧ್ಯವರ್ತಿ ಇಲ್ಲ'],en:['Our village harvest, at your door','Straight from the farmer — no middleman']},
-  {e:'🍅',img:'images/hero2.jpg',kn:['ತಾಜಾ ತರಕಾರಿ ಪ್ರತಿದಿನ','ಬೆಳಿಗ್ಗೆ ಕೊಯ್ದದ್ದು, ಮಧ್ಯಾಹ್ನ ನಿಮ್ಮ ಅಡುಗೆಮನೆಗೆ'],en:['Fresh vegetables every day','Picked in the morning, in your kitchen by noon']},
-  {e:'🛕',img:'images/hero3.jpg',kn:['ದೇವಸ್ಥಾನದ ಪೂಜೆ ವಿವರ','ಅರ್ಚಕರಿಗೆ ನೇರವಾಗಿ ಕರೆ ಮಾಡಿ ಕೇಳಿ'],en:['Pooja details from the temple','Call the archaka directly and ask']},
-  {e:'💊',img:'images/hero4.jpg',kn:['ಔಷಧಿ ಮನೆಯಿಂದಲೇ ಕೇಳಿ','ಮೆಡಿಕಲ್ ಅಂಗಡಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ'],en:['Ask for medicine from home','Send the request to the medical shop on WhatsApp']},
-  {e:'🏫',img:'images/hero5.jpg',kn:['ಶಾಲೆಯ ಮಾಹಿತಿ ಒಂದೇ ಕಡೆ','ಶುಲ್ಕ ಮತ್ತು ಪ್ರವೇಶಕ್ಕೆ ಮುಖ್ಯ ಶಿಕ್ಷಕರಿಗೆ ಕರೆ'],en:['School information in one place','Call the headmaster about fees and admission']},
-  {e:'🍛',img:'images/hero6.jpg',kn:['ಊಟ, ತಿಂಡಿ, ಅಂಗಡಿ ಸಾಮಾನು','ಹೋಗುವ ಮೊದಲು ಕರೆ ಮಾಡಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ'],en:['Meals, tiffin and shop supplies','Call ahead and confirm before you go']}
+  {e:'🌾',img:'farming.jpg',kn:['ನಮ್ಮ ಊರಿನ ಬೆಳೆ, ನಿಮ್ಮ ಮನೆಗೆ','ರೈತರಿಂದ ನೇರವಾಗಿ — ಮಧ್ಯವರ್ತಿ ಇಲ್ಲ'],en:['Our village harvest, at your door','Straight from the farmer — no middleman']},
+  {e:'🍅',img:'vegetables.jpg',kn:['ತಾಜಾ ತರಕಾರಿ ಪ್ರತಿದಿನ','ಬೆಳಿಗ್ಗೆ ಕೊಯ್ದದ್ದು, ಮಧ್ಯಾಹ್ನ ನಿಮ್ಮ ಅಡುಗೆಮನೆಗೆ'],en:['Fresh vegetables every day','Picked in the morning, in your kitchen by noon']},
+  {e:'🛕',img:'temple.jpg',kn:['ದೇವಸ್ಥಾನದ ಪೂಜೆ ವಿವರ','ಅರ್ಚಕರಿಗೆ ನೇರವಾಗಿ ಕರೆ ಮಾಡಿ ಕೇಳಿ'],en:['Pooja details from the temple','Call the archaka directly and ask']},
+  {e:'💊',img:'hospital.jpg',kn:['ಔಷಧಿ ಮನೆಯಿಂದಲೇ ಕೇಳಿ','ಮೆಡಿಕಲ್ ಅಂಗಡಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ'],en:['Ask for medicine from home','Send the request to the medical shop on WhatsApp']},
+  // {e:'🏫',img:'images/hero5.jpg',kn:['ಶಾಲೆಯ ಮಾಹಿತಿ ಒಂದೇ ಕಡೆ','ಶುಲ್ಕ ಮತ್ತು ಪ್ರವೇಶಕ್ಕೆ ಮುಖ್ಯ ಶಿಕ್ಷಕರಿಗೆ ಕರೆ'],en:['School information in one place','Call the headmaster about fees and admission']},
+  {e:'🍛',img:'grocery.jpg',kn:['ಊಟ, ತಿಂಡಿ, ಅಂಗಡಿ ಸಾಮಾನು','ಹೋಗುವ ಮೊದಲು ಕರೆ ಮಾಡಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ'],en:['Meals, tiffin and shop supplies','Call ahead and confirm before you go']}
 ];
 let slideIdx = 0, slideTimer = null;
 function buildHero(){
@@ -636,7 +655,6 @@ function index(){
   STATIONARY.forEach((d,i) => rows.push({d, i, kind:'stat', sec:'stationary', label:t('statT')}));
   HOTELS.forEach((d,i) => rows.push({d, i, kind:'hotel', sec:'hotels', label:t('hotelT')}));
   TEMPLES.forEach((d,i) => rows.push({d, i, kind:'temple', sec:'temples', label:t('templeT')}));
-  SCHOOLS.forEach((d,i) => rows.push({d, i, kind:'school', sec:'schools', label:t('schoolT')}));
   HOSPITALS.forEach((d,i) => rows.push({d, i, kind:'hosp', sec:'hospital', label:t('hospT')}));
   return rows;
 }
@@ -662,14 +680,26 @@ function onSearch(){
      (r.d.farmer ? (r.d.farmer.kn + ' ' + r.d.farmer.en).toLowerCase().includes(q) : false))
   );
 
-  box.innerHTML = hits.length
-    ? hits.slice(0, 8).map(r =>
-        `<button class="hit" onclick="openDetail('${r.kind}',${r.i})">
-           <span class="em">${r.d.e}</span>
-           <span><b>${esc(L(r.d))}</b><small>${r.label} · ${vName(r.d.loc)}</small></span>
-           <span class="go">›</span>
-         </button>`).join('')
-    : `<p class="hint">${t('noResult')}</p>`;
+  if (!hits.length){ box.innerHTML = `<p class="hint">${t('noResult')}</p>`; return; }
+
+  /* vegetables/fruits: show every matching farmer as a full card with Order + Call */
+  const produce = hits.filter(r => r.kind === 'veg' || r.kind === 'fruit');
+  /* everything else: compact tappable row that opens the detail sheet */
+  const others = hits.filter(r => r.kind !== 'veg' && r.kind !== 'fruit').slice(0, 8);
+
+  let html = '';
+  if (produce.length){
+    html += `<div class="flist">${produce.map(r => farmerRow(r.d, r.i, r.kind)).join('')}</div>`;
+  }
+  if (others.length){
+    html += others.map(r =>
+      `<button class="hit" onclick="openDetail('${r.kind}',${r.i})">
+         <span class="em">${r.d.e}</span>
+         <span><b>${esc(L(r.d))}</b><small>${r.label} · ${vName(r.d.loc)}</small></span>
+         <span class="go">›</span>
+       </button>`).join('');
+  }
+  box.innerHTML = html;
 }
 
 /* =====================================================================
@@ -679,7 +709,7 @@ function sectionShell(id, titleKey, subKey, badge){
   return `<section id="${id}">
     <div class="shead"><h2>${t(titleKey)}</h2>${badge ? `<span class="badge">${badge}</span>` : ''}</div>
     <p class="sub">${t(subKey)}</p>
-    <div class="grid${['stationary','hotels','temples','schools','hospital'].includes(id) ? ' wide' : ''}" id="grid-${id}"></div>
+    <div class="grid${['stationary','hotels','temples','hospital'].includes(id) ? ' wide' : ''}" id="grid-${id}"></div>
   </section>`;
 }
 
@@ -689,8 +719,7 @@ function renderAll(){
     sectionShell('fruits','fruitT','fruitS', t('allVillages')) +
     sectionShell('stationary','statT','statS', t('onlyBel')) +
     sectionShell('hotels','hotelT','hotelS', t('onlyBel')) +
-    sectionShell('temples','templeT','templeS', t('allVillages')) +
-    sectionShell('schools','schoolT','schoolS', t('onlyBel')) +
+    sectionShell('temples','templeT','templeS', t('onlyBel')) +
     sectionShell('hospital','hospT','hospS', t('onlyBel'));
 
   fill('vegetables', VEG.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'veg', produceCard);
@@ -698,7 +727,6 @@ function renderAll(){
   fill('stationary', STATIONARY.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'stat', placeCard);
   fill('hotels', HOTELS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hotel', placeCard);
   fill('temples', TEMPLES.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'temple', placeCard);
-  fill('schools', SCHOOLS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'school', placeCard);
   fill('hospital', HOSPITALS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hosp', placeCard);
 }
 
@@ -713,7 +741,6 @@ function produceCard(d, i, kind){
     ${thumb(d, i)}
     <div class="cbody">
       <b>${esc(L(d))}</b>
-      <span class="price">${esc(d.rate)}</span>
       <span class="who">${t('farmer')}: ${esc(L(d.farmer))}</span>
       <span class="loc">📍 ${vName(d.loc)}</span>
     </div></button>`;
@@ -743,7 +770,7 @@ function showSheet(html, redraw){
 }
 
 function openDetail(kind, i){
-  const src = {veg:VEG, fruit:FRUIT, stat:STATIONARY, hotel:HOTELS, temple:TEMPLES, school:SCHOOLS, hosp:HOSPITALS}[kind];
+  const src = {veg:VEG, fruit:FRUIT, stat:STATIONARY, hotel:HOTELS, temple:TEMPLES, hosp:HOSPITALS}[kind];
   const d = src[i];
   const redraw = () => openDetail(kind, i);
   let body = '';
@@ -751,7 +778,6 @@ function openDetail(kind, i){
   if (kind === 'veg' || kind === 'fruit'){
     body = `${thumb(d, i)}
       <h3 style="margin-top:14px">${esc(L(d))}</h3>
-      <p class="meta">${esc(d.rate)}</p>
       ${kv(t('farmer'), esc(L(d.farmer)))}
       ${kv(t('village'), vName(d.loc))}
       <div class="btnrow">
@@ -767,7 +793,11 @@ function openDetail(kind, i){
       ${kv(t('items'), esc(L(d.items)))}
       ${kv(t('owner'), esc(L(d.owner)))}
       ${kv(t('timing'), esc(L(d.timing)))}
-      <div class="btnrow"><button class="btn solid" onclick="call('${d.phone}')">📞 ${t('call')}</button></div>`;
+      <div class="btnrow" id="statCallRow">
+        <button class="btn wa" onclick="openStatRequest(${i})">🧾 ${t('reqTitle')}</button>
+        <button class="btn call" onclick="showCallTips('${d.phone}')">📞 ${t('call')}</button>
+      </div>
+      <div id="statCallTips"></div>`;
   }
 
   if (kind === 'hotel'){
@@ -791,15 +821,6 @@ function openDetail(kind, i){
       </div>`;
   }
 
-  if (kind === 'school'){
-    body = `${gallery(d)}
-      <h3>${esc(L(d))}</h3>
-      <p class="meta">📍 ${vName(d.loc)}</p>
-      ${kv(t('about'), esc(L(d.about)))}
-      ${kv(t('activities'), esc(L(d.act)))}
-      <div class="btnrow"><button class="btn solid" onclick="call('${d.phone}')">📞 ${t('callHM')}</button></div>`;
-  }
-
   if (kind === 'hosp'){
     body = `${gallery(d)}
       <h3>${esc(L(d))}</h3>
@@ -807,8 +828,8 @@ function openDetail(kind, i){
       ${kv(t('doctor'), esc(L(d.doctor)) + ' · ' + esc(L(d.desig)))}
       ${kv(t('about'), esc(L(d.about)))}
       <div class="btnrow">
-        ${d.type === 'private' ? `<button class="btn wa" onclick="openMedicine(${i})">💊 ${t('getMed')}</button>` : ''}
-        <button class="btn ${d.type === 'private' ? 'call' : 'solid'}" onclick="call('${d.phone}')">📞 ${t('call')}</button>
+        <button class="btn wa" onclick="openMedicine(${i})">💊 ${t('getMed')}</button>
+        <button class="btn call" onclick="call('${d.phone}')">📞 ${t('call')}</button>
       </div>`;
   }
 
@@ -821,12 +842,20 @@ function openDetail(kind, i){
 let orderCtx = null, geo = null;
 
 function openOrder(kind, i){
-  const d = (kind === 'veg' ? VEG : FRUIT)[i];
+  const src = {veg:VEG, fruit:FRUIT, stat:STATIONARY}[kind];
+  const d = src[i];
   orderCtx = d; geo = null;
   const redraw = () => openOrder(kind, i);
+  const isStat = kind === 'stat';
+  const metaLine = isStat
+    ? `${esc(L(d))} · 📍 ${vName(d.loc)}`
+    : `${esc(L(d))} · ${t('farmer')}: ${esc(L(d.farmer))} · 📍 ${vName(d.loc)}`;
+  const itemVal = isStat ? '' : esc(L(d));
+  const itemPh  = isStat ? t('itemsPh') : '';
+  const qtyLbl  = isStat ? t('qtyGeneric') : t('qty');
   showSheet(`
     <h3>${t('ordTitle')}</h3>
-    <p class="meta">${esc(L(d))} · ${t('farmer')}: ${esc(L(d.farmer))} · 📍 ${vName(d.loc)}</p>
+    <p class="meta">${metaLine}</p>
 
     <label class="f" for="oName">${t('yourName')}</label>
     <input id="oName" class="inp" autocomplete="name">
@@ -835,9 +864,9 @@ function openOrder(kind, i){
     <input id="oPhone" class="inp" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel">
 
     <label class="f" for="oItem">${t('need')}</label>
-    <input id="oItem" class="inp" value="${esc(L(d))}">
+    <input id="oItem" class="inp" value="${itemVal}" placeholder="${itemPh}">
 
-    <label class="f">${t('qty')}</label>
+    <label class="f">${qtyLbl}</label>
     <div class="qty">
       <button type="button" onclick="bump(-1)" aria-label="minus">−</button>
       <input id="oQty" class="inp" value="1" inputmode="numeric" style="border:none;background:transparent">
@@ -949,9 +978,73 @@ function openMedicine(i){
     </div>
   `, redraw);
 }
-function picPicked(){
-  if (!$('#mPic').files.length) return;
-  $('#picOk').innerHTML = `
+function showCallTips(phone){
+  const row = $('#statCallRow');
+  if (row) row.style.display = 'none';
+  $('#statCallTips').innerHTML = `
+    <div class="alert">
+      <div class="ah"><span class="clip phone">📞</span><b>${t('callHead')}</b></div>
+      <ol>
+        <li><b>${t('callStep1')}</b></li>
+        <li><b>${t('callStep2')}</b></li>
+      </ol>
+      <p class="note" style="margin:0 0 10px">${t('callNote')}</p>
+      <button type="button" class="btn solid" onclick="call('${phone}')">📞 ${t('call')}</button>
+    </div>`;
+}
+
+/* ---- Stationery: send items list or a photo of the list, via WhatsApp ---- */
+let statReqPhone = null;
+function openStatRequest(i){
+  const d = STATIONARY[i];
+  statReqPhone = d.phone;
+  const redraw = () => openStatRequest(i);
+  showSheet(`
+    <h3>${t('reqTitle')}</h3>
+    <p class="meta">${esc(L(d))} · 📍 ${vName(d.loc)}</p>
+
+    <label class="f" for="sName">${t('yourName')}</label>
+    <input id="sName" class="inp" autocomplete="name">
+
+    <label class="f" for="sPhone">${t('phone')}</label>
+    <input id="sPhone" class="inp" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel">
+
+    <label class="f" for="sList">${t('itemsList')}</label>
+    <textarea id="sList" class="inp" rows="3" style="resize:vertical" placeholder="${t('itemsListPh')}"></textarea>
+
+    <label class="f">${t('orPhoto')}</label>
+    <input id="sPic" class="inp" type="file" accept="image/*" onchange="statPicPicked()">
+    <div id="sPicOk"></div>
+
+    <p class="err" id="sErr"></p>
+    <div class="btnrow"><button class="btn wa" onclick="sendStatRequest()">🟢 ${t('sendReq')}</button></div>
+  `, redraw);
+}
+function statPicPicked(){
+  if (!$('#sPic').files.length) return;
+  $('#sPicOk').innerHTML = attachAlert();
+}
+function sendStatRequest(){
+  const n = $('#sName').value.trim(), p = $('#sPhone').value.trim(), list = $('#sList').value.trim();
+  const hasPhoto = $('#sPic').files.length > 0;
+  const err = $('#sErr');
+  if (!n || !p){ err.textContent = t('eFill'); return; }
+  if (!/^[0-9]{10}$/.test(p)){ err.textContent = t('ePhone'); return; }
+  if (!list && !hasPhoto){ err.textContent = t('eListOrPhoto'); return; }
+  err.textContent = '';
+
+  const lines = [
+    '🧾 ' + t('reqTitle'),
+    `${t('yourName')}: ${n}`,
+    `${t('phone')}: ${p}`
+  ];
+  if (list) lines.push(`${t('itemsList')}: ${list}`);
+  if (hasPhoto) lines.push(t('photoAttached'));
+  window.open('https://wa.me/' + statReqPhone + '?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+}
+
+function attachAlert(){
+  return `
     <div class="ok">${t('prescOk')}</div>
     <div class="alert">
       <div class="ah"><span class="clip">📎</span><b>${t('prescHead')}</b></div>
@@ -962,6 +1055,10 @@ function picPicked(){
       <div class="warn">${t('prescWarn')}</div>
       <button type="button" class="copybtn" onclick="copyReminder(this)">📋 ${t('copyNote')}</button>
     </div>`;
+}
+function picPicked(){
+  if (!$('#mPic').files.length) return;
+  $('#picOk').innerHTML = attachAlert();
 }
 function copyReminder(btn){
   const text = `${t('prescStep1')}. ${t('prescStep2')}.`;
