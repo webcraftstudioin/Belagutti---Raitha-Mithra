@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Belagutti Village Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16231d;
+  --ink-soft:#5d6d64;
+  --paper:#fbf8f0;
+  --card:#ffffff;
+  --leaf:#1f6b4a;
+  --leaf-dark:#14503697;
+  --turmeric:#f0a81b;
+  --chilli:#c4382c;
+  --line:#e6e1d4;
+  --radius:16px;
+  --shadow:0 4px 18px rgba(22,35,29,.08);
+  --head:'Poppins','Noto Sans Kannada',system-ui,sans-serif;
+  --body:'Noto Sans Kannada','Poppins',system-ui,sans-serif;
+  --hdr-h:58px;
+}
+:root:not([data-theme="light"]){color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--hdr-h) + 72px)}
+body{
+  margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);
+  -webkit-tap-highlight-color:transparent;
+}
+img{max-width:100%;display:block}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font:inherit;width:100%}
+:focus-visible{outline:3px solid var(--turmeric);outline-offset:2px;border-radius:6px}
+
+/* ---------- Header ---------- */
+header{
+  position:sticky;top:0;z-index:60;height:var(--hdr-h);
+  background:var(--leaf);color:#fff;
+  display:flex;align-items:center;gap:12px;padding:0 14px;
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+}
+.brand{display:flex;align-items:center;gap:9px;font-family:var(--head);font-weight:700;font-size:17px;letter-spacing:-.2px;margin-right:auto}
+.brand .dot{width:28px;height:28px;border-radius:9px;background:var(--turmeric);display:grid;place-items:center;font-size:15px}
+nav.desk{display:none;gap:4px}
+nav.desk a{color:#fff;text-decoration:none;font-size:13.5px;font-weight:500;padding:7px 10px;border-radius:8px}
+nav.desk a:hover{background:rgba(255,255,255,.14)}
+.lang{
+  display:flex;background:rgba(255,255,255,.16);border-radius:999px;padding:3px;gap:2px;flex:none;
+}
+.lang button{padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:600;color:#fff;opacity:.75}
+.lang button.on{background:#fff;color:var(--leaf);opacity:1}
+.burger{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.14);font-size:18px}
+@media(min-width:1000px){
+  .burger{display:none}
+  nav.desk{display:flex}
+}
+
+/* ---------- Drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,18,14,.55);opacity:0;pointer-events:none;transition:.25s;z-index:80}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(82vw,320px);background:var(--card);z-index:90;
+  transform:translateX(105%);transition:transform .28s cubic-bezier(.3,.8,.4,1);
+  display:flex;flex-direction:column;padding:16px 14px;overflow-y:auto;
+}
+.drawer.on{transform:none}
+.drawer h4{margin:0 0 14px;font-family:var(--head);font-size:15px;display:flex;justify-content:space-between;align-items:center}
+.drawer a{
+  display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:12px;
+  text-decoration:none;color:var(--ink);font-weight:500;font-size:15px;border:1px solid var(--line);margin-bottom:8px;
+}
+.drawer a .ic{font-size:19px}
+.drawer a:active{background:#f2f7f4}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;background:#123a2a}
+.slides{display:flex;transition:transform .6s cubic-bezier(.4,.8,.3,1)}
+.slide{min-width:100%;height:230px;position:relative;display:grid;place-items:center}
+.slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slide .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,26,18,.25),rgba(8,26,18,.82))}
+.slide .cap{position:relative;text-align:center;color:#fff;padding:0 24px;max-width:620px;z-index:2}
+.slide .cap b{display:block;font-family:var(--head);font-size:clamp(20px,5.5vw,34px);line-height:1.15;font-weight:800;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+.slide .cap span{display:block;margin-top:8px;font-size:13.5px;opacity:.92}
+.slide .art{position:relative;z-index:2;font-size:52px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+.dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:3}
+.dots i{width:7px;height:7px;border-radius:99px;background:rgba(255,255,255,.45);transition:.3s}
+.dots i.on{background:#fff;width:20px}
+@media(min-width:760px){.slide{height:340px}}
+
+/* ---------- Search bar ---------- */
+.finder{
+  position:sticky;top:var(--hdr-h);z-index:50;background:var(--paper);
+  padding:12px 14px;border-bottom:1px solid var(--line);
+}
+.finder .row{display:flex;gap:8px;max-width:1100px;margin:0 auto}
+.field{position:relative;flex:1}
+.field .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.55}
+.field input,.field select{
+  padding:12px 12px 12px 36px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+  color:var(--ink);appearance:none;
+}
+.field.loc{flex:0 0 150px}
+@media(max-width:560px){
+  .finder .row{flex-direction:column}
+  .field.loc{flex:auto}
+}
+.results{max-width:1100px;margin:10px auto 0}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{
+  background:#fff;border:1px solid var(--line);padding:7px 12px;border-radius:999px;font-size:13px;
+  display:flex;align-items:center;gap:6px;
+}
+.chip.crop{background:#f2f8f4;border-color:#cfe4d8;color:#15533a;font-weight:500}
+.hint{font-size:12.5px;color:var(--ink-soft);margin:0 0 7px}
+.hit{
+  display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+  border-radius:12px;padding:9px 11px;margin-bottom:7px;width:100%;text-align:left;
+}
+.hit .em{font-size:20px}
+.hit b{font-size:14px;font-weight:600}
+.hit small{display:block;color:var(--ink-soft);font-size:12px}
+.hit .go{margin-left:auto;color:var(--leaf);font-size:18px}
+
+/* ---------- Sections ---------- */
+main{max-width:1100px;margin:0 auto;padding:6px 14px 40px}
+section{padding:22px 0 4px;scroll-margin-top:calc(var(--hdr-h) + 80px)}
+.shead{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+.shead h2{font-family:var(--head);font-size:19px;font-weight:700;margin:0;letter-spacing:-.3px}
+.shead .badge{font-size:11.5px;background:#f0ece0;color:var(--ink-soft);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.sub{margin:0 0 14px;color:var(--ink-soft);font-size:13px}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:620px){.grid{grid-template-columns:repeat(3,1fr);gap:14px}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
+.grid.wide{grid-template-columns:1fr}
+@media(min-width:620px){.grid.wide{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.grid.wide{grid-template-columns:repeat(3,1fr)}}
+
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  text-align:left;width:100%;display:flex;flex-direction:column;box-shadow:var(--shadow);
+  transition:transform .18s ease;
+}
+.card:active{transform:scale(.985)}
+.thumb{position:relative;aspect-ratio:4/3;display:grid;place-items:center;font-size:40px;background:linear-gradient(135deg,#e8f1ea,#d6e7dc)}
+.thumb.a{background:linear-gradient(135deg,#fdeecb,#f6dca0)}
+.thumb.b{background:linear-gradient(135deg,#f7dedb,#eec6c1)}
+.thumb.c{background:linear-gradient(135deg,#dfe7f6,#c8d6ee)}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tag{
+  position:absolute;left:8px;top:8px;z-index:2;background:rgba(255,255,255,.94);color:var(--leaf);
+  font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;
+}
+.cbody{padding:10px 11px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.cbody b{font-size:14.5px;font-weight:600;line-height:1.25}
+.cbody .who{font-size:12.5px;color:var(--ink-soft)}
+.cbody .loc{font-size:12px;color:var(--ink-soft);margin-top:auto;padding-top:6px}
+.cbody .price{font-size:13px;font-weight:600;color:var(--leaf)}
+
+.empty{
+  border:1px dashed var(--line);border-radius:var(--radius);padding:22px;text-align:center;
+  color:var(--ink-soft);font-size:13.5px;background:#fff;
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:13px 16px;border-radius:12px;font-weight:600;font-size:14.5px;width:100%;
+}
+.btn.wa{background:#1faa54;color:#fff}
+.btn.call{background:#fff;color:var(--leaf);border:1.5px solid var(--leaf)}
+.btn.map{background:#eef3fb;color:#24457c;border:1.5px solid #cdd9ee}
+.btn.solid{background:var(--leaf);color:#fff}
+.btn.ghost{background:#f2efe6;color:var(--ink)}
+.btn:active{filter:brightness(.95)}
+.btnrow{display:flex;gap:9px;margin-top:14px}
+
+/* ---------- Sheet / modal ---------- */
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:95;background:var(--card);
+  border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto;
+  transform:translateY(102%);transition:transform .3s cubic-bezier(.3,.8,.4,1);
+  padding:0 16px calc(18px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 30px rgba(0,0,0,.18);
+}
+.sheet.on{transform:none}
+@media(min-width:760px){
+  .sheet{
+    left:50%;right:auto;bottom:auto;top:50%;width:520px;max-height:86vh;border-radius:20px;
+    transform:translate(-50%,-44%) scale(.97);opacity:0;
+  }
+  .sheet.on{transform:translate(-50%,-50%);opacity:1}
+}
+.grab{position:sticky;top:0;background:var(--card);padding:10px 0 6px;z-index:3}
+.grab .bar{width:42px;height:4px;border-radius:99px;background:#dcd6c8;margin:0 auto}
+.sheet h3{font-family:var(--head);font-size:19px;margin:6px 0 2px;letter-spacing:-.3px}
+.sheet .meta{color:var(--ink-soft);font-size:13px;margin:0 0 12px}
+.closeX{position:absolute;right:12px;top:10px;width:32px;height:32px;border-radius:99px;background:#f1ede3;display:grid;place-items:center;font-size:15px;z-index:4}
+
+.gal{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;margin:0 -16px 14px;padding-left:16px;padding-right:16px}
+.gal::-webkit-scrollbar{display:none}
+.gal .g{flex:0 0 78%;max-width:300px;aspect-ratio:4/3;border-radius:14px;overflow:hidden;scroll-snap-align:center;position:relative;display:grid;place-items:center;font-size:44px}
+.gal .g img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+.kv{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.kv span{color:var(--ink-soft);flex:0 0 96px;font-size:13px}
+.kv b{font-weight:600}
+.list{margin:0;padding-left:18px;font-size:14px;line-height:1.75;color:var(--ink)}
+
+label.f{display:block;font-size:12.5px;color:var(--ink-soft);margin:12px 0 5px;font-weight:500}
+.inp{padding:12px;border:1px solid var(--line);border-radius:12px;background:#fdfcf8;color:var(--ink)}
+.inp:focus{border-color:var(--leaf);background:#fff}
+select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#7a8a80 50%),linear-gradient(135deg,#7a8a80 50%,transparent 50%);background-position:calc(100% - 18px) 20px,calc(100% - 13px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.qty{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fdfcf8}
+.qty button{width:48px;height:46px;font-size:20px;color:var(--leaf);background:#fff;flex:none}
+.qty input{border:none;text-align:center;background:transparent;padding:12px 0}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;padding:12px;border-radius:12px;border:1.5px solid var(--line);font-size:13.5px;font-weight:500;background:#fff}
+.seg button.on{border-color:var(--leaf);background:#f1f8f4;color:var(--leaf);font-weight:600}
+.note{font-size:12px;color:var(--ink-soft);margin:8px 0 0;line-height:1.5}
+.err{color:var(--chilli);font-size:12.5px;margin:8px 0 0;min-height:16px}
+.ok{background:#f1f8f4;border:1px solid #cfe4d8;color:#15533a;font-size:12.5px;padding:9px 11px;border-radius:10px;margin-top:8px}
+
+footer{background:#14352a;color:#dfe9e3;text-align:center;padding:26px 16px calc(26px + env(safe-area-inset-bottom));font-size:13px}
+footer b{color:#fff;font-family:var(--head)}
+footer a{transition:font-weight .15s}
+footer a:hover,footer a:focus-visible,footer a:active{font-weight:700}
+footer p{margin:5px 0}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><span class="dot">🌾</span><span data-t="brand">ಬೆಳಗುತ್ತಿ ಮಾರುಕಟ್ಟೆ</span></div>
+  <nav class="desk" id="deskNav"></nav>
+  <div class="lang" role="group" aria-label="Language">
+    <button id="btnKn" class="on" onclick="setLang('kn')">ಕನ್ನಡ</button>
+    <button id="btnEn" onclick="setLang('en')">EN</button>
+  </div>
+  <button class="burger" id="burger" onclick="openDrawer()" aria-label="Menu">☰</button>
+</header>
+
+<div class="scrim" id="scrim" onclick="closeAll()"></div>
+<aside class="drawer" id="drawer" aria-label="Sections">
+  <h4><span data-t="menu">ವಿಭಾಗಗಳು</span><button onclick="closeAll()" style="font-size:18px">✕</button></h4>
+  <div id="drawerNav"></div>
+</aside>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="slides" id="slides"></div>
+  <div class="dots" id="dots"></div>
+</div>
+
+<!-- SEARCH -->
+<div class="finder">
+  <div class="row">
+    <div class="field">
+      <span class="ic">🔍</span>
+      <input id="q" class="inp" oninput="onSearch()" data-t-ph="searchPh" placeholder="">
+    </div>
+    <div class="field loc">
+      <span class="ic">📍</span>
+      <select id="loc" class="inp" onchange="onLocation()"></select>
+    </div>
+  </div>
+  <div class="results" id="results"></div>
+</div>
+
+<main id="main"></main>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <button class="closeX" onclick="closeAll()" aria-label="Close">✕</button>
+  <div class="grab"><div class="bar"></div></div>
+  <div id="sheetBody"></div>
+</div>
+
+<footer>
+  <p><b data-t="brand">ಬೆಳಗುತ್ತಿ ಮಾರುಕಟ್ಟೆ</b></p>
+  <p data-t="footNote">ರೈತರು, ಅಂಗಡಿಗಳು ಮತ್ತು ಗ್ರಾಹಕರನ್ನು ನೇರವಾಗಿ ಜೋಡಿಸುತ್ತದೆ.</p>
+  <p style="opacity:.7">© 2026 · Developed &amp; designed by <a href="https://shashankabcbuilds.in" target="_blank" rel="noopener" style="color:#dfe9e3;text-decoration:underline">Shashanka</a></p>
+</footer>
+
+<script>
+/* =====================================================================
+   1. LANGUAGE STRINGS
+   ===================================================================== */
+const T = {
+  brand:{kn:'ಬೆಳಗುತ್ತಿ ಮಾರುಕಟ್ಟೆ',en:'Belagutti Market'},
+  menu:{kn:'ವಿಭಾಗಗಳು',en:'Sections'},
+  searchPh:{kn:'ತರಕಾರಿ, ಹಣ್ಣು, ಅಂಗಡಿ ಹುಡುಕಿ…',en:'Search vegetables, fruits, shops…'},
+  allLoc:{kn:'ಎಲ್ಲಾ ಊರುಗಳು',en:'All villages'},
+  cropsHere:{kn:'ಇಲ್ಲಿ ಬೆಳೆಯುವ ಬೆಳೆಗಳು',en:'Crops grown here'},
+  noResult:{kn:'ಏನೂ ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ಹೆಸರು ಪ್ರಯತ್ನಿಸಿ.',en:'Nothing found. Try another name.'},
+  noneHere:{kn:'ಈ ಊರಿನಲ್ಲಿ ಸದ್ಯಕ್ಕೆ ಲಭ್ಯವಿಲ್ಲ.',en:'Not available in this village yet.'},
+  onlyBel:{kn:'ಬೆಳಗುತ್ತಿಯಲ್ಲಿ ಮಾತ್ರ',en:'Belagutti only'},
+  allVillages:{kn:'ಎಲ್ಲಾ 4 ಊರುಗಳು',en:'All 4 villages'},
+
+  vegT:{kn:'ತರಕಾರಿಗಳು',en:'Vegetables'},
+  vegS:{kn:'ರೈತರಿಂದ ನೇರವಾಗಿ. ಯಾವುದೇ ತರಕಾರಿ ಒತ್ತಿ ರೈತರ ವಿವರ ನೋಡಿ.',en:'Straight from the farmer. Tap any vegetable to see who grows it.'},
+  fruitT:{kn:'ಹಣ್ಣುಗಳು',en:'Fruits'},
+  fruitS:{kn:'ತೋಟದಿಂದ ತಾಜಾ ಹಣ್ಣುಗಳು.',en:'Fresh fruit from the orchard.'},
+  statT:{kn:'ಸ್ಟೇಷನರಿ ಅಂಗಡಿಗಳು',en:'Stationery shops'},
+  statS:{kn:'ಪುಸ್ತಕ, ಆಹಾರ, ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್ — ಅಂಗಡಿಗೆ ಹೋಗುವ ಮೊದಲು ಕರೆ ಮಾಡಿ ವಸ್ತು ಮತ್ತು ಬೆಲೆ ಕೇಳಿ.',en:'Books, food, electronics — call first to check stock and price before walking over.'},
+  hotelT:{kn:'ಹೋಟೆಲ್‌ಗಳು',en:'Hotels'},
+  hotelS:{kn:'ಊಟ ಮತ್ತು ತಿಂಡಿ. ಆರ್ಡರ್ ಮಾಡಲು ನೇರ ಕರೆ.',en:'Meals and tiffin. Call directly to order.'},
+  templeT:{kn:'ದೇವಸ್ಥಾನಗಳು',en:'Temples'},
+  templeS:{kn:'ಪೂಜೆ ವಿವರಗಳಿಗೆ ಅರ್ಚಕರೊಂದಿಗೆ ನೇರ ಸಂಪರ್ಕ.',en:'Talk to the archaka directly about pooja details.'},
+  schoolT:{kn:'ಶಾಲೆಗಳು',en:'Schools'},
+  schoolS:{kn:'ಮಕ್ಕಳನ್ನು ಸೇರಿಸಲು ಯೋಚಿಸುತ್ತಿರುವ ಪೋಷಕರಿಗಾಗಿ.',en:'For parents planning admission for their children.'},
+  hospT:{kn:'ಆಸ್ಪತ್ರೆ ಮತ್ತು ಔಷಧಿ',en:'Hospital & medicine'},
+  hospS:{kn:'ಔಷಧಿ ಬೇಕಾದರೆ ಫಾರ್ಮ್ ತುಂಬಿ — ಮೆಡಿಕಲ್ ಅಂಗಡಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹೋಗುತ್ತದೆ.',en:'Need medicine? Fill the form — it goes to the medical shop on WhatsApp.'},
+
+  order:{kn:'ಆರ್ಡರ್ ಮಾಡಿ',en:'Order'},
+  call:{kn:'ಕರೆ ಮಾಡಿ',en:'Call'},
+  wa:{kn:'ವಾಟ್ಸಾಪ್',en:'WhatsApp'},
+  viewLoc:{kn:'ಸ್ಥಳ ನೋಡಿ',en:'View location'},
+  getMed:{kn:'ಔಷಧಿ ಪಡೆಯಿರಿ',en:'Get medicine'},
+  callShop:{kn:'ಮೆಡಿಕಲ್‌ಗೆ ಕರೆ',en:'Call medical shop'},
+  callHM:{kn:'ಮುಖ್ಯ ಶಿಕ್ಷಕರಿಗೆ ಕರೆ',en:'Call headmaster'},
+  callArch:{kn:'ಅರ್ಚಕರಿಗೆ ಕರೆ',en:'Call archaka'},
+
+  farmer:{kn:'ರೈತರು',en:'Farmer'},
+  village:{kn:'ಊರು',en:'Village'},
+  rate:{kn:'ದರ',en:'Rate'},
+  items:{kn:'ವಸ್ತುಗಳು',en:'Items'},
+  menuF:{kn:'ತಿಂಡಿ / ಊಟ',en:'Food served'},
+  timing:{kn:'ಸಮಯ',en:'Timing'},
+  owner:{kn:'ಮಾಲೀಕರು',en:'Owner'},
+  doctor:{kn:'ವೈದ್ಯರು',en:'Doctor'},
+  about:{kn:'ವಿವರ',en:'About'},
+  activities:{kn:'ಚಟುವಟಿಕೆಗಳು',en:'Activities'},
+  pooja:{kn:'ಪೂಜೆ ಸಮಯ',en:'Pooja timing'},
+
+  ordTitle:{kn:'ಆರ್ಡರ್ ವಿವರ',en:'Order details'},
+  yourName:{kn:'ನಿಮ್ಮ ಹೆಸರು',en:'Your name'},
+  phone:{kn:'ಫೋನ್ ನಂಬರ್ (10 ಅಂಕಿ)',en:'Phone number (10 digits)'},
+  need:{kn:'ಬೇಕಾದ ತರಕಾರಿ / ಹಣ್ಣು',en:'What you need'},
+  qty:{kn:'ಪ್ರಮಾಣ (ಕೆ.ಜಿ.)',en:'Quantity (kg)'},
+  delivery:{kn:'ವಿತರಣೆ ವಿಧಾನ',en:'Delivery mode'},
+  pickup:{kn:'ನಾನೇ ಬಂದು ತೆಗೆದುಕೊಳ್ಳುತ್ತೇನೆ',en:'Pickup'},
+  home:{kn:'ಮನೆಗೆ ಡೆಲಿವರಿ',en:'Home delivery'},
+  sendLoc:{kn:'ನನ್ನ ಮನೆ ಸ್ಥಳ ಕಳುಹಿಸಿ',en:'Send my home location'},
+  addr:{kn:'ಮನೆ ವಿಳಾಸ',en:'Home address'},
+  addrPh:{kn:'ಊರು, ಮನೆ ಗುರುತು…',en:'Village, landmark…'},
+  locCap:{kn:'ಸ್ಥಳ ಸಿಕ್ಕಿತು ✓ ಇದು ವಾಟ್ಸಾಪ್ ಸಂದೇಶದಲ್ಲಿ ನಕ್ಷೆ ಲಿಂಕ್ ಆಗಿ ಹೋಗುತ್ತದೆ.',en:'Location captured ✓ It will go as a map link in the WhatsApp message.'},
+  sendWA:{kn:'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಆರ್ಡರ್ ಕಳುಹಿಸಿ',en:'Send order on WhatsApp'},
+
+  medTitle:{kn:'ಔಷಧಿ ಕೋರಿಕೆ',en:'Medicine request'},
+  age:{kn:'ವಯಸ್ಸು',en:'Age'},
+  issue:{kn:'ಸಮಸ್ಯೆ ಏನು?',en:'What is the problem?'},
+  issuePh:{kn:'ಜ್ವರ, ತಲೆನೋವು, ಕೆಮ್ಮು…',en:'Fever, headache, cough…'},
+  medName:{kn:'ಟ್ಯಾಬ್ಲೆಟ್ / ಸಿರಪ್ ಹೆಸರು',en:'Tablet / syrup name'},
+  presc:{kn:'ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಫೋಟೋ ಆಯ್ಕೆ ಮಾಡಿ',en:'Choose prescription photo'},
+  prescNote:{kn:'ಫೋಟೋ ಆಯ್ಕೆ ಮಾಡಿದ ನಂತರ ವಾಟ್ಸಾಪ್ ತೆರೆಯುತ್ತದೆ — ಅಲ್ಲಿ 📎 ಒತ್ತಿ ಅದೇ ಫೋಟೋ ಲಗತ್ತಿಸಿ ಕಳುಹಿಸಿ.',en:'After choosing the photo, WhatsApp opens — tap 📎 there and attach the same photo.'},
+  prescOk:{kn:'ಫೋಟೋ ಆಯ್ಕೆಯಾಗಿದೆ ✓',en:'Photo selected ✓'},
+  sendMed:{kn:'ಮೆಡಿಕಲ್‌ಗೆ ಕಳುಹಿಸಿ',en:'Send to medical shop'},
+
+  eFill:{kn:'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ವಿವರ ತುಂಬಿ.',en:'Please fill in every field.'},
+  ePhone:{kn:'ಸರಿಯಾದ 10 ಅಂಕಿಯ ನಂಬರ್ ಹಾಕಿ.',en:'Enter a valid 10-digit number.'},
+  eQty:{kn:'ಪ್ರಮಾಣ ಸಂಖ್ಯೆಯಲ್ಲಿರಬೇಕು.',en:'Quantity must be a number.'},
+  eAge:{kn:'ವಯಸ್ಸು ಸಂಖ್ಯೆಯಲ್ಲಿರಬೇಕು.',en:'Age must be a number.'},
+  eAddr:{kn:'ಮನೆ ವಿಳಾಸ ಹಾಕಿ ಅಥವಾ ಸ್ಥಳ ಕಳುಹಿಸಿ.',en:'Enter your address or send your location.'},
+  eGeo:{kn:'ಸ್ಥಳ ಸಿಗಲಿಲ್ಲ. ವಿಳಾಸ ಟೈಪ್ ಮಾಡಿ.',en:'Could not get location. Please type the address.'},
+  footNote:{kn:'ರೈತರು, ಅಂಗಡಿಗಳು ಮತ್ತು ಗ್ರಾಹಕರನ್ನು ನೇರವಾಗಿ ಜೋಡಿಸುತ್ತದೆ.',en:'Connecting farmers, shops and customers directly.'}
+};
+let lang = 'kn';
+const t = k => (T[k] ? T[k][lang] : k);
+const L = o => (lang === 'kn' ? (o.kn || o.en) : (o.en || o.kn));
+
+/* =====================================================================
+   2. DATA  — edit names, phone numbers and image paths here
+   ===================================================================== */
+const VILLAGES = [
+  {id:'Belagutti',      kn:'ಬೆಳಗುತ್ತಿ',     en:'Belagutti'},
+  {id:'Malligenahalli', kn:'ಮಲ್ಲಿಗೇನಹಳ್ಳಿ', en:'Malligenahalli'},
+  {id:'Guddehalli',     kn:'ಗುದ್ದೆಹಳ್ಳಿ',    en:'Guddehalli'},
+  {id:'Jeenahalli',     kn:'ಜೀನಹಳ್ಳಿ',      en:'Jeenahalli'}
+];
+const vName = id => { const v = VILLAGES.find(x => x.id === id); return v ? L(v) : id; };
+
+const CROPS = {
+  Belagutti:[{kn:'ರಾಗಿ',en:'Ragi',e:'🌾'},{kn:'ಭತ್ತ',en:'Paddy',e:'🌾'},{kn:'ಟೊಮೇಟೊ',en:'Tomato',e:'🍅'},{kn:'ಅಡಿಕೆ',en:'Areca nut',e:'🌴'},{kn:'ತೆಂಗು',en:'Coconut',e:'🥥'}],
+  Malligenahalli:[{kn:'ಮೆಕ್ಕೆಜೋಳ',en:'Maize',e:'🌽'},{kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅'},{kn:'ಕಬ್ಬು',en:'Sugarcane',e:'🎋'},{kn:'ಎಲೆಕೋಸು',en:'Cabbage',e:'🥬'}],
+  Guddehalli:[{kn:'ಶೇಂಗಾ',en:'Groundnut',e:'🥜'},{kn:'ಆಲೂಗಡ್ಡೆ',en:'Potato',e:'🥔'},{kn:'ಬಾಳೆ',en:'Banana',e:'🍌'},{kn:'ಜೋಳ',en:'Jowar',e:'🌾'}],
+  Jeenahalli:[{kn:'ಕ್ಯಾರೆಟ್',en:'Carrot',e:'🥕'},{kn:'ಸೂರ್ಯಕಾಂತಿ',en:'Sunflower',e:'🌻'},{kn:'ಮಾವು',en:'Mango',e:'🥭'},{kn:'ರಾಗಿ',en:'Ragi',e:'🌾'}]
+};
+
+const VEG = [
+  {kn:'ಟೊಮೇಟೊ',en:'Tomato',e:'🍅',farmer:{kn:'ರಮೇಶ್',en:'Ramesh'},loc:'Belagutti',img:'images/tomato.jpg',phone:'918095296727',rate:'₹25 / kg'},
+  {kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Malligenahalli',img:'images/onion.jpg',phone:'918217286041',rate:'₹30 / kg'},
+  {kn:'ಆಲೂಗಡ್ಡೆ',en:'Potato',e:'🥔',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'images/potato.jpg',phone:'917892443608',rate:'₹28 / kg'},
+  {kn:'ಕ್ಯಾರೆಟ್',en:'Carrot',e:'🥕',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'images/carrot.jpg',phone:'917019175379',rate:'₹35 / kg'},
+  {kn:'ಬದನೆಕಾಯಿ',en:'Brinjal',e:'🍆',farmer:{kn:'ಲೋಕೇಶ್',en:'Lokesh'},loc:'Belagutti',img:'images/brinjal.jpg',phone:'919148628502',rate:'₹22 / kg'},
+  {kn:'ಎಲೆಕೋಸು',en:'Cabbage',e:'🥬',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'images/cabbage.jpg',phone:'917353109581',rate:'₹20 / kg'}
+];
+const FRUIT = [
+  {kn:'ಮಾವು',en:'Mango',e:'🥭',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Belagutti',img:'images/mango.jpg',phone:'919606778356',rate:'₹60 / kg'},
+  {kn:'ಬಾಳೆಹಣ್ಣು',en:'Banana',e:'🍌',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'images/banana.jpg',phone:'919902872691',rate:'₹40 / dozen'},
+  {kn:'ಸೇಬು',en:'Apple',e:'🍎',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'images/apple.jpg',phone:'919008239032',rate:'₹120 / kg'},
+  {kn:'ಕಿತ್ತಳೆ',en:'Orange',e:'🍊',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'images/orange.jpg',phone:'918217679427',rate:'₹70 / kg'}
+];
+
+const STATIONARY = [
+  {kn:'ಶ್ರೀ ಗಣೇಶ್ ಸ್ಟೇಷನರಿ',en:'Sri Ganesh Stationery',e:'✏️',loc:'Belagutti',img:'images/stationary.jpg',phone:'919916118623',
+   owner:{kn:'ಗಣೇಶ್',en:'Ganesh'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 8 – ರಾತ್ರಿ 9',en:'8 AM – 9 PM'},
+   items:{kn:'ಪುಸ್ತಕ, ಪೆನ್ನು, ನೋಟ್‌ಬುಕ್, ಜೆರಾಕ್ಸ್, ಸ್ಕೂಲ್ ಬ್ಯಾಗ್',en:'Books, pens, notebooks, xerox, school bags'}},
+  {kn:'ಅನ್ನಪೂರ್ಣ ಕಿರಾಣಿ ಅಂಗಡಿ',en:'Annapoorna Provision Store',e:'🛒',loc:'Belagutti',img:'images/grocery.jpg',phone:'919916118623',
+   owner:{kn:'ಶಿವಣ್ಣ',en:'Shivanna'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 7 – ರಾತ್ರಿ 9',en:'7 AM – 9 PM'},
+   items:{kn:'ಅಕ್ಕಿ, ಬೇಳೆ, ಎಣ್ಣೆ, ಮಸಾಲೆ, ತಿಂಡಿ ಪದಾರ್ಥ',en:'Rice, dal, oil, masala, snacks'}},
+  {kn:'ಬೆಳಗುತ್ತಿ ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್',en:'Belagutti Electronics',e:'🔌',loc:'Belagutti',img:'images/electronics.jpg',phone:'919916118623',
+   owner:{kn:'ನಾಗರಾಜ್',en:'Nagaraj'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 9 – ರಾತ್ರಿ 8',en:'9 AM – 8 PM'},
+   items:{kn:'ಬಲ್ಬ್, ವೈರ್, ಮೊಬೈಲ್ ಚಾರ್ಜರ್, ರಿಪೇರಿ',en:'Bulbs, wiring, mobile chargers, repairs'}}
+];
+
+const HOTELS = [
+  {kn:'ಶ್ರೀ ಲಕ್ಷ್ಮೀ ಖಾನಾವಳಿ',en:'Sri Lakshmi Khanavali',e:'🍛',loc:'Belagutti',img:'images/hotel1.jpg',phone:'919916118623',
+   timing:{kn:'ಬೆಳಿಗ್ಗೆ 7 – ರಾತ್ರಿ 10',en:'7 AM – 10 PM'},
+   food:{kn:'ಇಡ್ಲಿ, ದೋಸೆ, ಊಟ (ರೈಸ್ ಬಾತ್), ಚಪಾತಿ',en:'Idli, dosa, full meals, chapati'}},
+  {kn:'ಅಣ್ಣಪ್ಪ ಟೀ ಸ್ಟಾಲ್',en:'Annappa Tea Stall',e:'☕',loc:'Belagutti',img:'images/hotel2.jpg',phone:'919916118623',
+   timing:{kn:'ಬೆಳಿಗ್ಗೆ 6 – ರಾತ್ರಿ 9',en:'6 AM – 9 PM'},
+   food:{kn:'ಚಹಾ, ಕಾಫಿ, ಬಜ್ಜಿ, ಮಿರ್ಚಿ, ಗೋಳಿಬಜೆ',en:'Tea, coffee, bajji, mirchi, goli bajje'}},
+  {kn:'ಗ್ರಾಮ ರುಚಿ ಹೋಟೆಲ್',en:'Grama Ruchi Hotel',e:'🍲',loc:'Belagutti',img:'images/hotel3.jpg',phone:'919916118623',
+   timing:{kn:'ಮಧ್ಯಾಹ್ನ 11 – ರಾತ್ರಿ 10',en:'11 AM – 10 PM'},
+   food:{kn:'ಉತ್ತರ ಕರ್ನಾಟಕ ಊಟ, ರೊಟ್ಟಿ, ಎಣ್ಣೆಗಾಯಿ',en:'North Karnataka meals, jolada rotti, ennegayi'}}
+];
+
+const TEMPLES = [
+  {kn:'ಶ್ರೀ ಆಂಜನೇಯ ಸ್ವಾಮಿ ದೇವಸ್ಥಾನ',en:'Sri Anjaneya Swamy Temple',e:'🛕',loc:'Belagutti',img:'images/temple1.jpg',phone:'919916118623',
+   map:'https://maps.google.com/?q=Belagutti',
+   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 6–11, ಸಂಜೆ 5–8 · ಶನಿವಾರ ವಿಶೇಷ ಪೂಜೆ',en:'6–11 AM, 5–8 PM · Special pooja on Saturdays'},
+   about:{kn:'ಊರಿನ ಪ್ರಮುಖ ದೇವಸ್ಥಾನ. ಹನುಮ ಜಯಂತಿ ಮತ್ತು ವಾರ್ಷಿಕ ಜಾತ್ರೆ ಇಲ್ಲಿ ನಡೆಯುತ್ತದೆ.',en:'The main temple of the village. Hanuma Jayanti and the annual jatre are held here.'}},
+  {kn:'ಶ್ರೀ ಬಸವೇಶ್ವರ ದೇವಸ್ಥಾನ',en:'Sri Basaveshwara Temple',e:'🛕',loc:'Malligenahalli',img:'images/temple2.jpg',phone:'919916118623',
+   map:'https://maps.google.com/?q=Malligenahalli',
+   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 6–10, ಸಂಜೆ 6–8 · ಸೋಮವಾರ ರುದ್ರಾಭಿಷೇಕ',en:'6–10 AM, 6–8 PM · Rudrabhisheka on Mondays'},
+   about:{kn:'ಶಿವರಾತ್ರಿಯಂದು ದೊಡ್ಡ ಉತ್ಸವ ನಡೆಯುತ್ತದೆ.',en:'A large festival is held here on Shivaratri.'}},
+  {kn:'ಶ್ರೀ ದುರ್ಗಾ ಪರಮೇಶ್ವರಿ ದೇವಸ್ಥಾನ',en:'Sri Durga Parameshwari Temple',e:'🛕',loc:'Guddehalli',img:'images/temple3.jpg',phone:'919916118623',
+   map:'https://maps.google.com/?q=Guddehalli',
+   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 7–11, ಸಂಜೆ 5–7 · ಶುಕ್ರವಾರ ಕುಂಕುಮಾರ್ಚನೆ',en:'7–11 AM, 5–7 PM · Kumkumarchane on Fridays'},
+   about:{kn:'ಹರಕೆ ಮತ್ತು ವಿಶೇಷ ಪೂಜೆಗಳಿಗೆ ಮೊದಲೇ ಅರ್ಚಕರಿಗೆ ಕರೆ ಮಾಡಿ.',en:'Call the archaka in advance for harake and special poojas.'}},
+  {kn:'ಶ್ರೀ ಮಾರಮ್ಮ ದೇವಸ್ಥಾನ',en:'Sri Maramma Temple',e:'🛕',loc:'Jeenahalli',img:'images/temple4.jpg',phone:'919916118623',
+   map:'https://maps.google.com/?q=Jeenahalli',
+   pooja:{kn:'ಬೆಳಿಗ್ಗೆ 6–10, ಸಂಜೆ 6–8 · ಮಂಗಳವಾರ ವಿಶೇಷ',en:'6–10 AM, 6–8 PM · Special on Tuesdays'},
+   about:{kn:'ಪ್ರತಿ ವರ್ಷ ಊರ ಹಬ್ಬ ಇಲ್ಲಿ ಆಚರಿಸಲಾಗುತ್ತದೆ.',en:'The village festival is celebrated here every year.'}}
+];
+
+const SCHOOLS = [
+  {kn:'ಸರ್ಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ',en:'Govt. Higher Primary School',e:'🏫',loc:'Belagutti',img:'images/school1.jpg',phone:'919916118623',
+   about:{kn:'1ರಿಂದ 8ನೇ ತರಗತಿ · ಕನ್ನಡ ಮಾಧ್ಯಮ · ಉಚಿತ ಶಿಕ್ಷಣ ಮತ್ತು ಬಿಸಿಯೂಟ',en:'Classes 1–8 · Kannada medium · Free education and midday meals'},
+   act:{kn:'ಕ್ರೀಡೆ, ಪ್ರತಿಭಾ ಕಾರಂಜಿ, ವಾರ್ಷಿಕೋತ್ಸವ, ಗ್ರಂಥಾಲಯ',en:'Sports, Pratibha Karanji, annual day, library'}},
+  {kn:'ಸರ್ಕಾರಿ ಪ್ರೌಢಶಾಲೆ',en:'Govt. High School',e:'🎓',loc:'Belagutti',img:'images/school2.jpg',phone:'919916118623',
+   about:{kn:'8ರಿಂದ 10ನೇ ತರಗತಿ · ಕನ್ನಡ ಮತ್ತು ಇಂಗ್ಲಿಷ್ · ವಿಜ್ಞಾನ ಪ್ರಯೋಗಾಲಯ',en:'Classes 8–10 · Kannada and English · Science lab'},
+   act:{kn:'ಎನ್‌ಎಸ್‌ಎಸ್, ವಿಜ್ಞಾನ ಮೇಳ, ಕಂಪ್ಯೂಟರ್ ತರಗತಿ',en:'NSS, science fair, computer classes'}},
+  {kn:'ಸೇಂಟ್ ಮೇರಿಸ್ ಇಂಗ್ಲಿಷ್ ಸ್ಕೂಲ್',en:"St. Mary's English School",e:'📚',loc:'Belagutti',img:'images/school3.jpg',phone:'919916118623',
+   about:{kn:'ಎಲ್‌ಕೆಜಿಯಿಂದ 7ನೇ ತರಗತಿ · ಇಂಗ್ಲಿಷ್ ಮಾಧ್ಯಮ · ಬಸ್ ಸೌಲಭ್ಯ ಇದೆ',en:'LKG to Class 7 · English medium · School bus available'},
+   act:{kn:'ಯೋಗ, ನೃತ್ಯ, ಚಿತ್ರಕಲೆ, ಕ್ರೀಡಾಕೂಟ',en:'Yoga, dance, drawing, sports day'}}
+];
+
+const HOSPITALS = [
+  {kn:'ಸರ್ಕಾರಿ ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ',en:'Govt. Primary Health Centre',e:'🏥',loc:'Belagutti',img:'images/hospital1.jpg',
+   type:'govt',phone:'919916118623',
+   doctor:{kn:'ಡಾ. ಶ್ರೀಧರ್',en:'Dr. Sridhar'},desig:{kn:'ವೈದ್ಯಾಧಿಕಾರಿ (MBBS)',en:'Medical Officer (MBBS)'},
+   about:{kn:'24×7 ತುರ್ತು ಸೇವೆ · ಲಸಿಕೆ · ಹೆರಿಗೆ ಸೌಲಭ್ಯ · ಉಚಿತ ಔಷಧಿ',en:'24×7 emergency · vaccination · delivery facility · free medicines'}},
+  {kn:'ಶ್ರೀ ಸಾಯಿ ಕ್ಲಿನಿಕ್ ಮತ್ತು ಮೆಡಿಕಲ್',en:'Sri Sai Clinic & Medicals',e:'💊',loc:'Belagutti',img:'images/hospital2.jpg',
+   type:'private',phone:'919916118623',medPhone:'919916118623',
+   doctor:{kn:'ಡಾ. ಪ್ರಕಾಶ್',en:'Dr. Prakash'},desig:{kn:'ಜನರಲ್ ಫಿಸಿಷಿಯನ್ (MBBS, MD)',en:'General Physician (MBBS, MD)'},
+   about:{kn:'ಬೆಳಿಗ್ಗೆ 9–1, ಸಂಜೆ 5–8 · ಮೆಡಿಕಲ್ ಅಂಗಡಿ ಇದೇ ಕಟ್ಟಡದಲ್ಲಿ',en:'9 AM–1 PM, 5–8 PM · Medical shop in the same building'}},
+  {kn:'ಆಶಾ ಕ್ಲಿನಿಕ್ ಮತ್ತು ಮೆಡಿಕಲ್ ಸ್ಟೋರ್',en:'Asha Clinic & Medical Store',e:'🩺',loc:'Belagutti',img:'images/hospital3.jpg',
+   type:'private',phone:'919916118623',medPhone:'919916118623',
+   doctor:{kn:'ಡಾ. ಸವಿತಾ',en:'Dr. Savitha'},desig:{kn:'ಮಕ್ಕಳ ತಜ್ಞೆ (MBBS, DCH)',en:'Paediatrician (MBBS, DCH)'},
+   about:{kn:'ಬೆಳಿಗ್ಗೆ 10–2, ಸಂಜೆ 6–9 · ಮಕ್ಕಳ ಚಿಕಿತ್ಸೆ ಮತ್ತು ಲಸಿಕೆ',en:'10 AM–2 PM, 6–9 PM · Child care and vaccination'}}
+];
+
+const SECTIONS = [
+  {id:'vegetables',title:'vegT',ic:'🥕'},
+  {id:'fruits',    title:'fruitT',ic:'🍎'},
+  {id:'stationary',title:'statT',ic:'✏️'},
+  {id:'hotels',    title:'hotelT',ic:'🍛'},
+  {id:'temples',   title:'templeT',ic:'🛕'},
+  {id:'schools',   title:'schoolT',ic:'🏫'},
+  {id:'hospital',  title:'hospT',ic:'🏥'}
+];
+
+/* =====================================================================
+   3. HELPERS
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shade = i => ['','a','b','c'][i % 4];
+
+function thumb(item, i, cls){
+  return `<div class="thumb ${shade(i)} ${cls||''}">
+      <span>${item.e || '📷'}</span>
+      ${item.img ? `<img src="${esc(item.img)}" alt="${esc(L(item))}" loading="lazy" onerror="this.remove()">` : ''}
+    </div>`;
+}
+/* 4 scrollable images for a place. If images/name-2.jpg etc. don't exist,
+   the coloured tile stays visible — nothing breaks. */
+function gallery(item){
+  const base = (item.img || '').replace(/\.(jpg|jpeg|png|webp)$/i, '');
+  const ext  = (item.img || '').match(/\.(jpg|jpeg|png|webp)$/i)?.[0] || '.jpg';
+  let out = '<div class="gal">';
+  for (let i = 0; i < 4; i++){
+    const src = item.img ? (i === 0 ? item.img : `${base}-${i + 1}${ext}`) : '';
+    out += `<div class="g ${shade(i)}"><span>${item.e || '📷'}</span>${src ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</div>`;
+  }
+  return out + '</div>';
+}
+const kv = (label, val) => `<div class="kv"><span>${label}</span><b>${val}</b></div>`;
+const call = p => { window.location.href = 'tel:+' + p; };
+
+/* =====================================================================
+   4. LANGUAGE + NAV
+   ===================================================================== */
+function setLang(l){
+  lang = l;
+  document.documentElement.lang = l;
+  $('#btnKn').classList.toggle('on', l === 'kn');
+  $('#btnEn').classList.toggle('on', l === 'en');
+  document.querySelectorAll('[data-t]').forEach(el => el.textContent = t(el.dataset.t));
+  document.querySelectorAll('[data-t-ph]').forEach(el => el.placeholder = t(el.dataset.tPh));
+  buildNav(); buildLocations(); buildHero(); renderAll(); onSearch();
+  if (openSheetRef) openSheetRef();   // re-render an open sheet in the new language
+}
+
+function buildNav(){
+  $('#deskNav').innerHTML = SECTIONS.map(s => `<a href="#${s.id}">${t(s.title)}</a>`).join('');
+  $('#drawerNav').innerHTML = SECTIONS.map(s =>
+    `<a href="#${s.id}" onclick="closeAll()"><span class="ic">${s.ic}</span>${t(s.title)}</a>`).join('');
+}
+function openDrawer(){ $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); }
+function closeAll(){
+  $('#drawer').classList.remove('on');
+  $('#sheet').classList.remove('on');
+  $('#scrim').classList.remove('on');
+  openSheetRef = null;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+/* =====================================================================
+   5. HERO CAROUSEL
+   ===================================================================== */
+const SLIDES = [
+  {e:'🌾',img:'images/hero1.jpg',kn:['ನಮ್ಮ ಊರಿನ ಬೆಳೆ, ನಿಮ್ಮ ಮನೆಗೆ','ರೈತರಿಂದ ನೇರವಾಗಿ — ಮಧ್ಯವರ್ತಿ ಇಲ್ಲ'],en:['Our village harvest, at your door','Straight from the farmer — no middleman']},
+  {e:'🍅',img:'images/hero2.jpg',kn:['ತಾಜಾ ತರಕಾರಿ ಪ್ರತಿದಿನ','ಬೆಳಿಗ್ಗೆ ಕೊಯ್ದದ್ದು, ಮಧ್ಯಾಹ್ನ ನಿಮ್ಮ ಅಡುಗೆಮನೆಗೆ'],en:['Fresh vegetables every day','Picked in the morning, in your kitchen by noon']},
+  {e:'🛕',img:'images/hero3.jpg',kn:['ದೇವಸ್ಥಾನದ ಪೂಜೆ ವಿವರ','ಅರ್ಚಕರಿಗೆ ನೇರವಾಗಿ ಕರೆ ಮಾಡಿ ಕೇಳಿ'],en:['Pooja details from the temple','Call the archaka directly and ask']},
+  {e:'💊',img:'images/hero4.jpg',kn:['ಔಷಧಿ ಮನೆಯಿಂದಲೇ ಕೇಳಿ','ಮೆಡಿಕಲ್ ಅಂಗಡಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ'],en:['Ask for medicine from home','Send the request to the medical shop on WhatsApp']},
+  {e:'🏫',img:'images/hero5.jpg',kn:['ಶಾಲೆಯ ಮಾಹಿತಿ ಒಂದೇ ಕಡೆ','ಶುಲ್ಕ ಮತ್ತು ಪ್ರವೇಶಕ್ಕೆ ಮುಖ್ಯ ಶಿಕ್ಷಕರಿಗೆ ಕರೆ'],en:['School information in one place','Call the headmaster about fees and admission']},
+  {e:'🍛',img:'images/hero6.jpg',kn:['ಊಟ, ತಿಂಡಿ, ಅಂಗಡಿ ಸಾಮಾನು','ಹೋಗುವ ಮೊದಲು ಕರೆ ಮಾಡಿ ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ'],en:['Meals, tiffin and shop supplies','Call ahead and confirm before you go']}
+];
+let slideIdx = 0, slideTimer = null;
+function buildHero(){
+  $('#slides').innerHTML = SLIDES.map((s, i) => {
+    const c = lang === 'kn' ? s.kn : s.en;
+    return `<div class="slide">
+      ${s.img ? `<img src="${esc(s.img)}" alt="" onerror="this.remove()">` : ''}
+      <div class="veil"></div>
+      <div class="cap"><span class="art">${s.e}</span><b>${esc(c[0])}</b><span>${esc(c[1])}</span></div>
+    </div>`;
+  }).join('');
+  $('#dots').innerHTML = SLIDES.map((_, i) => `<i class="${i === slideIdx ? 'on' : ''}"></i>`).join('');
+  goSlide(slideIdx);
+}
+function goSlide(i){
+  slideIdx = (i + SLIDES.length) % SLIDES.length;
+  $('#slides').style.transform = `translateX(-${slideIdx * 100}%)`;
+  $('#dots').querySelectorAll('i').forEach((d, n) => d.classList.toggle('on', n === slideIdx));
+}
+function startHero(){
+  clearInterval(slideTimer);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  slideTimer = setInterval(() => goSlide(slideIdx + 1), 4000);
+}
+/* swipe on the hero */
+let hx = null;
+$('#slides').addEventListener('touchstart', e => { hx = e.touches[0].clientX; clearInterval(slideTimer); }, {passive:true});
+$('#slides').addEventListener('touchend', e => {
+  if (hx === null) return;
+  const d = e.changedTouches[0].clientX - hx;
+  if (Math.abs(d) > 40) goSlide(slideIdx + (d < 0 ? 1 : -1));
+  hx = null; startHero();
+}, {passive:true});
+
+/* =====================================================================
+   6. SEARCH + LOCATION
+   ===================================================================== */
+function buildLocations(){
+  const cur = $('#loc').value;
+  $('#loc').innerHTML = `<option value="">${t('allLoc')}</option>` +
+    VILLAGES.map(v => `<option value="${v.id}">${L(v)}</option>`).join('');
+  $('#loc').value = cur;
+}
+const curLoc = () => $('#loc').value;
+const inLoc = x => !curLoc() || x.loc === curLoc();
+
+function onLocation(){ renderAll(); onSearch(); }
+
+/* everything searchable, in one flat index */
+function index(){
+  const rows = [];
+  VEG.forEach((d,i) => rows.push({d, i, kind:'veg', sec:'vegetables', label:t('vegT')}));
+  FRUIT.forEach((d,i) => rows.push({d, i, kind:'fruit', sec:'fruits', label:t('fruitT')}));
+  STATIONARY.forEach((d,i) => rows.push({d, i, kind:'stat', sec:'stationary', label:t('statT')}));
+  HOTELS.forEach((d,i) => rows.push({d, i, kind:'hotel', sec:'hotels', label:t('hotelT')}));
+  TEMPLES.forEach((d,i) => rows.push({d, i, kind:'temple', sec:'temples', label:t('templeT')}));
+  SCHOOLS.forEach((d,i) => rows.push({d, i, kind:'school', sec:'schools', label:t('schoolT')}));
+  HOSPITALS.forEach((d,i) => rows.push({d, i, kind:'hosp', sec:'hospital', label:t('hospT')}));
+  return rows;
+}
+
+function onSearch(){
+  const q = $('#q').value.trim().toLowerCase();
+  const box = $('#results');
+  const loc = curLoc();
+
+  if (!q){
+    /* no search text: if a village is picked, show the crops grown there */
+    if (loc){
+      const list = CROPS[loc] || [];
+      box.innerHTML = `<p class="hint">${t('cropsHere')} · ${vName(loc)}</p>
+        <div class="chips">${list.map(c => `<span class="chip crop">${c.e} ${L(c)}</span>`).join('')}</div>`;
+    } else box.innerHTML = '';
+    return;
+  }
+
+  const hits = index().filter(r =>
+    (!loc || r.d.loc === loc) &&
+    ((r.d.kn + ' ' + r.d.en).toLowerCase().includes(q) ||
+     (r.d.farmer ? (r.d.farmer.kn + ' ' + r.d.farmer.en).toLowerCase().includes(q) : false))
+  );
+
+  box.innerHTML = hits.length
+    ? hits.slice(0, 8).map(r =>
+        `<button class="hit" onclick="openDetail('${r.kind}',${r.i})">
+           <span class="em">${r.d.e}</span>
+           <span><b>${esc(L(r.d))}</b><small>${r.label} · ${vName(r.d.loc)}</small></span>
+           <span class="go">›</span>
+         </button>`).join('')
+    : `<p class="hint">${t('noResult')}</p>`;
+}
+
+/* =====================================================================
+   7. SECTION RENDERING
+   ===================================================================== */
+function sectionShell(id, titleKey, subKey, badge){
+  return `<section id="${id}">
+    <div class="shead"><h2>${t(titleKey)}</h2>${badge ? `<span class="badge">${badge}</span>` : ''}</div>
+    <p class="sub">${t(subKey)}</p>
+    <div class="grid${['stationary','hotels','temples','schools','hospital'].includes(id) ? ' wide' : ''}" id="grid-${id}"></div>
+  </section>`;
+}
+
+function renderAll(){
+  $('#main').innerHTML =
+    sectionShell('vegetables','vegT','vegS', t('allVillages')) +
+    sectionShell('fruits','fruitT','fruitS', t('allVillages')) +
+    sectionShell('stationary','statT','statS', t('onlyBel')) +
+    sectionShell('hotels','hotelT','hotelS', t('onlyBel')) +
+    sectionShell('temples','templeT','templeS', t('allVillages')) +
+    sectionShell('schools','schoolT','schoolS', t('onlyBel')) +
+    sectionShell('hospital','hospT','hospS', t('onlyBel'));
+
+  fill('vegetables', VEG.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'veg', produceCard);
+  fill('fruits', FRUIT.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'fruit', produceCard);
+  fill('stationary', STATIONARY.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'stat', placeCard);
+  fill('hotels', HOTELS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hotel', placeCard);
+  fill('temples', TEMPLES.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'temple', placeCard);
+  fill('schools', SCHOOLS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'school', placeCard);
+  fill('hospital', HOSPITALS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hosp', placeCard);
+}
+
+function fill(id, rows, kind, tpl){
+  const el = $('#grid-' + id);
+  if (!rows.length){ el.innerHTML = `<div class="empty" style="grid-column:1/-1">${t('noneHere')}</div>`; return; }
+  el.innerHTML = rows.map(r => tpl(r.d, r.i, kind)).join('');
+}
+
+function produceCard(d, i, kind){
+  return `<button class="card" onclick="openDetail('${kind}',${i})">
+    ${thumb(d, i)}
+    <div class="cbody">
+      <b>${esc(L(d))}</b>
+      <span class="price">${esc(d.rate)}</span>
+      <span class="who">${t('farmer')}: ${esc(L(d.farmer))}</span>
+      <span class="loc">📍 ${vName(d.loc)}</span>
+    </div></button>`;
+}
+function placeCard(d, i, kind){
+  const line = d.items ? L(d.items) : d.food ? L(d.food) : d.doctor ? L(d.doctor) + ' · ' + L(d.desig) : d.about ? L(d.about) : '';
+  return `<button class="card" onclick="openDetail('${kind}',${i})">
+    ${thumb(d, i)}
+    <div class="cbody">
+      <b>${esc(L(d))}</b>
+      <span class="who">${esc(line)}</span>
+      <span class="loc">📍 ${vName(d.loc)}</span>
+    </div></button>`;
+}
+
+/* =====================================================================
+   8. DETAIL SHEET
+   ===================================================================== */
+let openSheetRef = null;
+
+function showSheet(html, redraw){
+  $('#sheetBody').innerHTML = html;
+  $('#sheet').classList.add('on');
+  $('#scrim').classList.add('on');
+  $('#sheet').scrollTop = 0;
+  openSheetRef = redraw || null;
+}
+
+function openDetail(kind, i){
+  const src = {veg:VEG, fruit:FRUIT, stat:STATIONARY, hotel:HOTELS, temple:TEMPLES, school:SCHOOLS, hosp:HOSPITALS}[kind];
+  const d = src[i];
+  const redraw = () => openDetail(kind, i);
+  let body = '';
+
+  if (kind === 'veg' || kind === 'fruit'){
+    body = `${thumb(d, i)}
+      <h3 style="margin-top:14px">${esc(L(d))}</h3>
+      <p class="meta">${esc(d.rate)}</p>
+      ${kv(t('farmer'), esc(L(d.farmer)))}
+      ${kv(t('village'), vName(d.loc))}
+      <div class="btnrow">
+        <button class="btn wa" onclick="openOrder('${kind}',${i})">🟢 ${t('order')}</button>
+        <button class="btn call" onclick="call('${d.phone}')">📞 ${t('call')}</button>
+      </div>`;
+  }
+
+  if (kind === 'stat'){
+    body = `${gallery(d)}
+      <h3>${esc(L(d))}</h3>
+      <p class="meta">📍 ${vName(d.loc)}</p>
+      ${kv(t('items'), esc(L(d.items)))}
+      ${kv(t('owner'), esc(L(d.owner)))}
+      ${kv(t('timing'), esc(L(d.timing)))}
+      <div class="btnrow"><button class="btn solid" onclick="call('${d.phone}')">📞 ${t('call')}</button></div>`;
+  }
+
+  if (kind === 'hotel'){
+    body = `${gallery(d)}
+      <h3>${esc(L(d))}</h3>
+      <p class="meta">📍 ${vName(d.loc)}</p>
+      ${kv(t('menuF'), esc(L(d.food)))}
+      ${kv(t('timing'), esc(L(d.timing)))}
+      <div class="btnrow"><button class="btn solid" onclick="call('${d.phone}')">📞 ${t('call')}</button></div>`;
+  }
+
+  if (kind === 'temple'){
+    body = `${gallery(d)}
+      <h3>${esc(L(d))}</h3>
+      <p class="meta">📍 ${vName(d.loc)}</p>
+      ${kv(t('pooja'), esc(L(d.pooja)))}
+      ${kv(t('about'), esc(L(d.about)))}
+      <div class="btnrow">
+        <a class="btn map" href="${esc(d.map)}" target="_blank" rel="noopener">🗺️ ${t('viewLoc')}</a>
+        <button class="btn call" onclick="call('${d.phone}')">📞 ${t('callArch')}</button>
+      </div>`;
+  }
+
+  if (kind === 'school'){
+    body = `${gallery(d)}
+      <h3>${esc(L(d))}</h3>
+      <p class="meta">📍 ${vName(d.loc)}</p>
+      ${kv(t('about'), esc(L(d.about)))}
+      ${kv(t('activities'), esc(L(d.act)))}
+      <div class="btnrow"><button class="btn solid" onclick="call('${d.phone}')">📞 ${t('callHM')}</button></div>`;
+  }
+
+  if (kind === 'hosp'){
+    body = `${gallery(d)}
+      <h3>${esc(L(d))}</h3>
+      <p class="meta">📍 ${vName(d.loc)}</p>
+      ${kv(t('doctor'), esc(L(d.doctor)) + ' · ' + esc(L(d.desig)))}
+      ${kv(t('about'), esc(L(d.about)))}
+      <div class="btnrow">
+        ${d.type === 'private' ? `<button class="btn wa" onclick="openMedicine(${i})">💊 ${t('getMed')}</button>` : ''}
+        <button class="btn ${d.type === 'private' ? 'call' : 'solid'}" onclick="call('${d.phone}')">📞 ${t('call')}</button>
+      </div>`;
+  }
+
+  showSheet(body, redraw);
+}
+
+/* =====================================================================
+   9. ORDER FORM  →  WhatsApp
+   ===================================================================== */
+let orderCtx = null, geo = null;
+
+function openOrder(kind, i){
+  const d = (kind === 'veg' ? VEG : FRUIT)[i];
+  orderCtx = d; geo = null;
+  const redraw = () => openOrder(kind, i);
+  showSheet(`
+    <h3>${t('ordTitle')}</h3>
+    <p class="meta">${esc(L(d))} · ${t('farmer')}: ${esc(L(d.farmer))} · 📍 ${vName(d.loc)}</p>
+
+    <label class="f" for="oName">${t('yourName')}</label>
+    <input id="oName" class="inp" autocomplete="name">
+
+    <label class="f" for="oPhone">${t('phone')}</label>
+    <input id="oPhone" class="inp" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel">
+
+    <label class="f" for="oItem">${t('need')}</label>
+    <input id="oItem" class="inp" value="${esc(L(d))}">
+
+    <label class="f">${t('qty')}</label>
+    <div class="qty">
+      <button type="button" onclick="bump(-1)" aria-label="minus">−</button>
+      <input id="oQty" class="inp" value="1" inputmode="numeric" style="border:none;background:transparent">
+      <button type="button" onclick="bump(1)" aria-label="plus">+</button>
+    </div>
+
+    <label class="f">${t('delivery')}</label>
+    <div class="seg">
+      <button type="button" id="segP" class="on" onclick="setMode('pickup')">🛵 ${t('pickup')}</button>
+      <button type="button" id="segH" onclick="setMode('home')">🏠 ${t('home')}</button>
+    </div>
+
+    <div id="homeBox" style="display:none">
+      <label class="f" for="oAddr">${t('addr')}</label>
+      <input id="oAddr" class="inp" placeholder="${t('addrPh')}">
+      <div style="margin-top:9px"><button class="btn map" type="button" onclick="grabLocation()">📍 ${t('sendLoc')}</button></div>
+      <div id="geoOk"></div>
+    </div>
+
+    <p class="err" id="oErr"></p>
+    <div class="btnrow"><button class="btn wa" onclick="sendOrder()">🟢 ${t('sendWA')}</button></div>
+  `, redraw);
+}
+let mode = 'pickup';
+function setMode(m){
+  mode = m;
+  $('#segP').classList.toggle('on', m === 'pickup');
+  $('#segH').classList.toggle('on', m === 'home');
+  $('#homeBox').style.display = m === 'home' ? 'block' : 'none';
+}
+function bump(n){
+  const el = $('#oQty');
+  el.value = Math.max(1, (parseInt(el.value) || 0) + n);
+}
+function grabLocation(){
+  if (!navigator.geolocation){ $('#oErr').textContent = t('eGeo'); return; }
+  navigator.geolocation.getCurrentPosition(
+    p => {
+      geo = `https://maps.google.com/?q=${p.coords.latitude.toFixed(6)},${p.coords.longitude.toFixed(6)}`;
+      $('#geoOk').innerHTML = `<div class="ok">${t('locCap')}</div>`;
+      $('#oErr').textContent = '';
+    },
+    () => { $('#oErr').textContent = t('eGeo'); },
+    {enableHighAccuracy:true, timeout:10000}
+  );
+}
+function sendOrder(){
+  const n = $('#oName').value.trim(), p = $('#oPhone').value.trim(),
+        it = $('#oItem').value.trim(), q = $('#oQty').value.trim(),
+        err = $('#oErr');
+  if (!n || !p || !it || !q){ err.textContent = t('eFill'); return; }
+  if (!/^[0-9]{10}$/.test(p)){ err.textContent = t('ePhone'); return; }
+  if (!/^[0-9]+$/.test(q)){ err.textContent = t('eQty'); return; }
+
+  let addr = '';
+  if (mode === 'home'){
+    addr = $('#oAddr').value.trim();
+    if (!addr && !geo){ err.textContent = t('eAddr'); return; }
+  }
+  err.textContent = '';
+
+  const lines = [
+    '🛒 ' + t('ordTitle'),
+    `${t('yourName')}: ${n}`,
+    `${t('phone')}: ${p}`,
+    `${t('need')}: ${it}`,
+    `${t('qty')}: ${q}`,
+    `${t('delivery')}: ${mode === 'home' ? t('home') : t('pickup')}`
+  ];
+  if (mode === 'home'){
+    if (addr) lines.push(`${t('addr')}: ${addr}`);
+    if (geo)  lines.push(`📍 ${geo}`);
+  }
+  window.open('https://wa.me/' + orderCtx.phone + '?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+}
+
+/* =====================================================================
+   10. MEDICINE FORM  →  WhatsApp
+   ===================================================================== */
+let medCtx = null;
+function openMedicine(i){
+  const d = HOSPITALS[i];
+  medCtx = d;
+  const redraw = () => openMedicine(i);
+  showSheet(`
+    <h3>${t('medTitle')}</h3>
+    <p class="meta">${esc(L(d))} · ${esc(L(d.doctor))}</p>
+
+    <label class="f" for="mName">${t('yourName')}</label>
+    <input id="mName" class="inp" autocomplete="name">
+
+    <label class="f" for="mAge">${t('age')}</label>
+    <input id="mAge" class="inp" inputmode="numeric" maxlength="3">
+
+    <label class="f" for="mIssue">${t('issue')}</label>
+    <input id="mIssue" class="inp" placeholder="${t('issuePh')}">
+
+    <label class="f" for="mMed">${t('medName')}</label>
+    <input id="mMed" class="inp">
+
+    <label class="f">${t('presc')}</label>
+    <input id="mPic" class="inp" type="file" accept="image/*" onchange="picPicked()">
+    <div id="picOk"></div>
+    <p class="note">${t('prescNote')}</p>
+
+    <p class="err" id="mErr"></p>
+    <div class="btnrow">
+      <button class="btn wa" onclick="sendMedicine()">🟢 ${t('sendMed')}</button>
+      <button class="btn call" onclick="call('${d.medPhone || d.phone}')">📞 ${t('callShop')}</button>
+    </div>
+  `, redraw);
+}
+function picPicked(){
+  if ($('#mPic').files.length) $('#picOk').innerHTML = `<div class="ok">${t('prescOk')}</div>`;
+}
+function sendMedicine(){
+  const n = $('#mName').value.trim(), a = $('#mAge').value.trim(),
+        is = $('#mIssue').value.trim(), m = $('#mMed').value.trim(),
+        err = $('#mErr');
+  if (!n || !a || !is || !m){ err.textContent = t('eFill'); return; }
+  if (!/^[0-9]{1,3}$/.test(a)){ err.textContent = t('eAge'); return; }
+  err.textContent = '';
+
+  const lines = [
+    '💊 ' + t('medTitle'),
+    `${t('yourName')}: ${n}`,
+    `${t('age')}: ${a}`,
+    `${t('issue')}: ${is}`,
+    `${t('medName')}: ${m}`,
+    `🏥 ${L(medCtx)}`
+  ];
+  window.open('https://wa.me/' + (medCtx.medPhone || medCtx.phone) + '?text=' + encodeURIComponent(lines.join('\n')), '_blank');
+}
+
+/* =====================================================================
+   11. BOOT
+   ===================================================================== */
+buildNav();
+buildLocations();
+buildHero();
+renderAll();
+setLang('kn');
+startHero();
+</script>
+</body>
+</html>
