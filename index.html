@@ -7,16 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Noto+Sans+Kannada:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase.js"></script>
-
 <style>
 :root{
   --ink:#16231d;
   --ink-soft:#5d6d64;
   --paper:#fbf8f0;
-  --card:#ffffff;
+  --card:#ffffff; 
   --leaf:#1f6b4a;
   --leaf-dark:#14503697;
   --turmeric:#f0a81b;
@@ -332,27 +328,7 @@ footer p{margin:5px 0}
   <p style="opacity:.7">© 2026 · Developed &amp; designed by <a href="https://shashankabcbuilds.in" target="_blank" rel="noopener" style="color:#dfe9e3;text-decoration:underline">Shashanka</a></p>
 </footer>
 
-
-
 <script>
-
-
-async function loadFarmers() {
-    const { data, error } = await supabaseClient
-        .from("farmers")
-        .select("*");
-
-    if (error) {
-        console.error("Database error:", error);
-        return;
-    }
-
-    console.log("Farmers:", data);
-}
-
-loadFarmers();
-
-
 /* =====================================================================
    1. LANGUAGE STRINGS
    ===================================================================== */
