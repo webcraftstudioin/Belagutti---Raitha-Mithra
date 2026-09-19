@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Belagutti Market – Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16231d; --ink-soft:#5d6d64; --paper:#fbf8f0; --card:#ffffff;
+  --leaf:#1f6b4a; --turmeric:#f0a81b; --chilli:#c4382c; --line:#e6e1d4;
+  --radius:14px; --shadow:0 4px 18px rgba(22,35,29,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Poppins',system-ui,sans-serif;background:var(--paper);color:var(--ink)}
+header{background:var(--leaf);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+header b{font-size:17px}
+header button{background:rgba(255,255,255,.16);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer}
+main{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+h2{font-size:18px;margin:0 0 4px}
+.sub{color:var(--ink-soft);font-size:13px;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+label{display:block;font-size:12.5px;color:var(--ink-soft);margin:12px 0 5px;font-weight:500}
+label:first-child{margin-top:0}
+input,textarea{
+  width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fdfcf8;
+  font:inherit;color:var(--ink);
+}
+input:focus,textarea:focus{outline:none;border-color:var(--leaf);background:#fff}
+textarea{resize:vertical}
+button.btn{
+  padding:12px 18px;border-radius:10px;border:none;font-weight:600;font-size:14px;cursor:pointer;margin-top:14px;
+}
+.btn.primary{background:var(--leaf);color:#fff}
+.btn.danger{background:#fff;color:var(--chilli);border:1.5px solid var(--chilli)}
+.btn.ghost{background:#f2efe6;color:var(--ink)}
+.err{color:var(--chilli);font-size:13px;margin-top:10px;min-height:16px}
+.ok{background:#f1f8f4;border:1px solid #cfe4d8;color:#15533a;font-size:13px;padding:9px 11px;border-radius:8px;margin-top:10px}
+.notice-item{border-bottom:1px solid var(--line);padding:14px 0}
+.notice-item:last-child{border-bottom:none}
+.notice-item b{font-size:14.5px}
+.notice-item .meta{font-size:12px;color:var(--ink-soft);margin:3px 0 8px}
+.notice-item p{margin:0 0 10px;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .btn{margin-top:0;padding:8px 13px;font-size:12.5px}
+.hidden{display:none}
+.badge{font-size:11px;background:#fdecc8;color:#8a5a12;padding:2px 8px;border-radius:999px;font-weight:600}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button{
+  flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
+  font-weight:600;font-size:13.5px;cursor:pointer;color:var(--ink-soft);
+}
+.tabs button.on{border-color:var(--leaf);background:#f1f8f4;color:var(--leaf)}
+select{
+  width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fdfcf8;
+  font:inherit;color:var(--ink);appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,#7a8a80 50%),linear-gradient(135deg,#7a8a80 50%,transparent 50%);
+  background-position:calc(100% - 18px) 20px,calc(100% - 13px) 20px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <b>🌾 Belagutti Market — Admin</b>
+  <button id="logoutBtn" class="hidden" onclick="logout()">Log out</button>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <div id="loginView" class="card">
+    <h2>Admin login</h2>
+    <p class="sub">Only your Supabase admin account can post notices.</p>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <p class="err" id="loginErr"></p>
+    <button class="btn primary" onclick="login()">Log in</button>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="panelView" class="hidden">
+    <div class="tabs">
+      <button id="tabBtnNotices" class="on" onclick="switchTab('notices')">📢 Notices</button>
+      <button id="tabBtnFarmers" onclick="switchTab('farmers')">🥕 Farmers</button>
+    </div>
+
+    <!-- NOTICES TAB -->
+    <div id="tabNotices">
+      <div class="card">
+        <h2 id="formTitle">Post a new notice</h2>
+        <p class="sub">Fill in both languages so everyone can read it.</p>
+
+        <label for="titleKn">Title (Kannada)</label>
+        <input id="titleKn" placeholder="ಶೀರ್ಷಿಕೆ">
+        <label for="titleEn">Title (English)</label>
+        <input id="titleEn" placeholder="Title">
+        <label for="bodyKn">Message (Kannada)</label>
+        <textarea id="bodyKn" rows="3" placeholder="ವಿವರ"></textarea>
+        <label for="bodyEn">Message (English)</label>
+        <textarea id="bodyEn" rows="3" placeholder="Details"></textarea>
+
+        <p class="err" id="formErr"></p>
+        <div class="row">
+          <button class="btn primary" onclick="saveNotice()">Post notice</button>
+          <button class="btn ghost hidden" id="cancelEditBtn" onclick="cancelEdit()">Cancel edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Existing notices</h2>
+        <p class="sub">Newest first. Inactive notices are hidden from the public site.</p>
+        <div id="noticeList"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- FARMERS TAB -->
+    <div id="tabFarmers" class="hidden">
+      <div class="card">
+        <h2 id="pFormTitle">Add a farmer listing</h2>
+        <p class="sub">One entry per farmer + crop. Fill in both languages.</p>
+
+        <label for="pType">Type</label>
+        <select id="pType">
+          <option value="veg">Vegetable</option>
+          <option value="fruit">Fruit</option>
+        </select>
+
+        <div class="grid2">
+          <div>
+            <label for="pNameKn">Crop name (Kannada)</label>
+            <input id="pNameKn" placeholder="ಟೊಮೇಟೊ">
+          </div>
+          <div>
+            <label for="pNameEn">Crop name (English)</label>
+            <input id="pNameEn" placeholder="Tomato">
+          </div>
+        </div>
+
+        <label for="pEmoji">Emoji (shown on the card)</label>
+        <input id="pEmoji" placeholder="🍅" maxlength="4">
+
+        <div class="grid2">
+          <div>
+            <label for="pFarmerKn">Farmer name (Kannada)</label>
+            <input id="pFarmerKn" placeholder="ರಮೇಶ್">
+          </div>
+          <div>
+            <label for="pFarmerEn">Farmer name (English)</label>
+            <input id="pFarmerEn" placeholder="Ramesh">
+          </div>
+        </div>
+
+        <label for="pVillage">Village</label>
+        <select id="pVillage">
+          <option value="Belagutti">Belagutti</option>
+          <option value="Malligenahalli">Malligenahalli</option>
+          <option value="Guddehalli">Guddehalli</option>
+          <option value="Jeenahalli">Jeenahalli</option>
+        </select>
+
+        <label for="pPhone">Phone number (10 digits, no +91)</label>
+        <input id="pPhone" inputmode="numeric" maxlength="10" placeholder="9916118623">
+
+        <label for="pImg">Photo file name (optional)</label>
+        <input id="pImg" placeholder="tomato.jpg">
+
+        <p class="err" id="pFormErr"></p>
+        <div class="row">
+          <button class="btn primary" onclick="saveProduce()">Save farmer listing</button>
+          <button class="btn ghost hidden" id="pCancelEditBtn" onclick="cancelProduceEdit()">Cancel edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Existing farmer listings</h2>
+        <p class="sub">Vegetables and fruits together. Inactive listings are hidden from the public site.</p>
+        <div id="produceList"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://yzffffubsskcjmulxpir.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZmZmZnVic3NrY2ptdWx4cGlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MzEwNzAsImV4cCI6MjEwNTMwNzA3MH0._XP5FN_9kseg0A3neJUCbVjD4XeeCU5CuN7w_ZYtOX8';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let editingNoticeId = null;
+let editingProduceId = null;
+
+/* ---------- Tabs ---------- */
+function switchTab(name){
+  const isNotices = name === 'notices';
+  $('#tabNotices').classList.toggle('hidden', !isNotices);
+  $('#tabFarmers').classList.toggle('hidden', isNotices);
+  $('#tabBtnNotices').classList.toggle('on', isNotices);
+  $('#tabBtnFarmers').classList.toggle('on', !isNotices);
+}
+
+/* ---------- Auth ---------- */
+async function checkSession(){
+  const { data } = await sb.auth.getSession();
+  if (data.session){
+    showPanel();
+  } else {
+    showLogin();
+  }
+}
+
+function showLogin(){
+  $('#loginView').classList.remove('hidden');
+  $('#panelView').classList.add('hidden');
+  $('#logoutBtn').classList.add('hidden');
+}
+function showPanel(){
+  $('#loginView').classList.add('hidden');
+  $('#panelView').classList.remove('hidden');
+  $('#logoutBtn').classList.remove('hidden');
+  loadNotices();
+  loadProduce();
+}
+
+async function login(){
+  const email = $('#email').value.trim();
+  const password = $('#password').value;
+  const err = $('#loginErr');
+  err.textContent = '';
+  if (!email || !password){ err.textContent = 'Enter email and password.'; return; }
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error){ err.textContent = error.message; return; }
+  showPanel();
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  showLogin();
+}
+
+/* ---------- Notices CRUD ---------- */
+async function loadNotices(){
+  const el = $('#noticeList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+  const { data, error } = await sb
+    .from('notices')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error){
+    el.innerHTML = `<p class="err">Could not load notices: ${esc(error.message)}</p>`;
+    return;
+  }
+  if (!data.length){
+    el.innerHTML = '<p class="sub">No notices yet. Post your first one above.</p>';
+    return;
+  }
+  el.innerHTML = data.map(rowHtml).join('');
+}
+
+function rowHtml(n){
+  const date = new Date(n.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  return `<div class="notice-item">
+    <b>${esc(n.title_en)}</b> ${n.active ? '' : '<span class="badge">Hidden</span>'}
+    <div class="meta">${esc(date)} · ${esc(n.title_kn)}</div>
+    <p>${esc(n.body_en)}</p>
+    <div class="row">
+      <button class="btn ghost" onclick="editNotice('${n.id}')">Edit</button>
+      <button class="btn ghost" onclick="toggleActive('${n.id}', ${n.active})">${n.active ? 'Hide' : 'Show'}</button>
+      <button class="btn danger" onclick="deleteNotice('${n.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+async function saveNotice(){
+  const titleKn = $('#titleKn').value.trim();
+  const titleEn = $('#titleEn').value.trim();
+  const bodyKn = $('#bodyKn').value.trim();
+  const bodyEn = $('#bodyEn').value.trim();
+  const err = $('#formErr');
+  err.textContent = '';
+
+  if (!titleKn || !titleEn || !bodyKn || !bodyEn){
+    err.textContent = 'Please fill in all four fields.';
+    return;
+  }
+
+  if (editingNoticeId){
+    const { error } = await sb.from('notices')
+      .update({ title_kn: titleKn, title_en: titleEn, body_kn: bodyKn, body_en: bodyEn })
+      .eq('id', editingNoticeId);
+    if (error){ err.textContent = error.message; return; }
+  } else {
+    const { error } = await sb.from('notices')
+      .insert({ title_kn: titleKn, title_en: titleEn, body_kn: bodyKn, body_en: bodyEn, active: true });
+    if (error){ err.textContent = error.message; return; }
+  }
+
+  clearForm();
+  loadNotices();
+}
+
+async function editNotice(id){
+  const { data, error } = await sb.from('notices').select('*').eq('id', id).single();
+  if (error){ $('#formErr').textContent = error.message; return; }
+  editingNoticeId = id;
+  $('#titleKn').value = data.title_kn;
+  $('#titleEn').value = data.title_en;
+  $('#bodyKn').value = data.body_kn;
+  $('#bodyEn').value = data.body_en;
+  $('#formTitle').textContent = 'Edit notice';
+  $('#cancelEditBtn').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelEdit(){ clearForm(); }
+
+function clearForm(){
+  editingNoticeId = null;
+  $('#titleKn').value = '';
+  $('#titleEn').value = '';
+  $('#bodyKn').value = '';
+  $('#bodyEn').value = '';
+  $('#formErr').textContent = '';
+  $('#formTitle').textContent = 'Post a new notice';
+  $('#cancelEditBtn').classList.add('hidden');
+}
+
+async function toggleActive(id, isActive){
+  const { error } = await sb.from('notices').update({ active: !isActive }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadNotices();
+}
+
+async function deleteNotice(id){
+  if (!confirm('Delete this notice permanently?')) return;
+  const { error } = await sb.from('notices').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadNotices();
+}
+
+/* ---------- Farmers (produce) CRUD ---------- */
+async function loadProduce(){
+  const el = $('#produceList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+  const { data, error } = await sb
+    .from('produce')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error){
+    el.innerHTML = `<p class="err">Could not load farmer listings: ${esc(error.message)}</p>`;
+    return;
+  }
+  if (!data.length){
+    el.innerHTML = '<p class="sub">No farmer listings yet. Add one above.</p>';
+    return;
+  }
+  el.innerHTML = data.map(produceRowHtml).join('');
+}
+
+function produceRowHtml(p){
+  const typeLabel = p.type === 'veg' ? 'Vegetable' : 'Fruit';
+  return `<div class="notice-item">
+    <b>${p.emoji} ${esc(p.name_en)}</b> ${p.active ? '' : '<span class="badge">Hidden</span>'}
+    <div class="meta">${esc(typeLabel)} · ${esc(p.farmer_en)} · ${esc(p.village)} · ${esc(p.phone)}</div>
+    <div class="row">
+      <button class="btn ghost" onclick="editProduce('${p.id}')">Edit</button>
+      <button class="btn ghost" onclick="toggleProduceActive('${p.id}', ${p.active})">${p.active ? 'Hide' : 'Show'}</button>
+      <button class="btn danger" onclick="deleteProduce('${p.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+async function saveProduce(){
+  const type = $('#pType').value;
+  const nameKn = $('#pNameKn').value.trim();
+  const nameEn = $('#pNameEn').value.trim();
+  const emoji = $('#pEmoji').value.trim() || (type === 'veg' ? '🥕' : '🍎');
+  const farmerKn = $('#pFarmerKn').value.trim();
+  const farmerEn = $('#pFarmerEn').value.trim();
+  const village = $('#pVillage').value;
+  const phone = $('#pPhone').value.trim();
+  const img = $('#pImg').value.trim();
+  const err = $('#pFormErr');
+  err.textContent = '';
+
+  if (!nameKn || !nameEn || !farmerKn || !farmerEn || !phone){
+    err.textContent = 'Please fill in all required fields.';
+    return;
+  }
+  if (!/^[0-9]{10}$/.test(phone)){
+    err.textContent = 'Phone number must be exactly 10 digits.';
+    return;
+  }
+
+  const payload = {
+    type, name_kn: nameKn, name_en: nameEn, emoji,
+    farmer_kn: farmerKn, farmer_en: farmerEn,
+    village, phone, img: img || null
+  };
+
+  if (editingProduceId){
+    const { error } = await sb.from('produce').update(payload).eq('id', editingProduceId);
+    if (error){ err.textContent = error.message; return; }
+  } else {
+    const { error } = await sb.from('produce').insert({ ...payload, active: true });
+    if (error){ err.textContent = error.message; return; }
+  }
+
+  clearProduceForm();
+  loadProduce();
+}
+
+async function editProduce(id){
+  const { data, error } = await sb.from('produce').select('*').eq('id', id).single();
+  if (error){ $('#pFormErr').textContent = error.message; return; }
+  editingProduceId = id;
+  $('#pType').value = data.type;
+  $('#pNameKn').value = data.name_kn;
+  $('#pNameEn').value = data.name_en;
+  $('#pEmoji').value = data.emoji;
+  $('#pFarmerKn').value = data.farmer_kn;
+  $('#pFarmerEn').value = data.farmer_en;
+  $('#pVillage').value = data.village;
+  $('#pPhone').value = data.phone;
+  $('#pImg').value = data.img || '';
+  $('#pFormTitle').textContent = 'Edit farmer listing';
+  $('#pCancelEditBtn').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelProduceEdit(){ clearProduceForm(); }
+
+function clearProduceForm(){
+  editingProduceId = null;
+  $('#pType').value = 'veg';
+  $('#pNameKn').value = '';
+  $('#pNameEn').value = '';
+  $('#pEmoji').value = '';
+  $('#pFarmerKn').value = '';
+  $('#pFarmerEn').value = '';
+  $('#pVillage').value = 'Belagutti';
+  $('#pPhone').value = '';
+  $('#pImg').value = '';
+  $('#pFormErr').textContent = '';
+  $('#pFormTitle').textContent = 'Add a farmer listing';
+  $('#pCancelEditBtn').classList.add('hidden');
+}
+
+async function toggleProduceActive(id, isActive){
+  const { error } = await sb.from('produce').update({ active: !isActive }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadProduce();
+}
+
+async function deleteProduce(id){
+  if (!confirm('Delete this farmer listing permanently?')) return;
+  const { error } = await sb.from('produce').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadProduce();
+}
+
+checkSession();
+</script>
+</body>
+</html>
