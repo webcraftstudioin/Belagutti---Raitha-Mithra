@@ -12,7 +12,7 @@
   --ink:#16231d;
   --ink-soft:#5d6d64;
   --paper:#fbf8f0;
-  --card:#ffffff; 
+  --card:#ffffff;
   --leaf:#1f6b4a;
   --leaf-dark:#14503697;
   --turmeric:#f0a81b;
@@ -185,6 +185,14 @@ section{padding:22px 0 4px;scroll-margin-top:calc(var(--hdr-h) + 80px)}
   color:var(--ink-soft);font-size:13.5px;background:#fff;
 }
 
+.notice{
+  background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;
+  margin-bottom:10px;box-shadow:var(--shadow);
+}
+.notice .ndate{font-size:11.5px;color:var(--ink-soft);margin-bottom:5px}
+.notice b{font-size:14.5px;font-weight:600;line-height:1.3}
+.notice p{margin:6px 0 0;font-size:13.5px;color:var(--ink);line-height:1.65;white-space:pre-wrap}
+
 /* ---------- Buttons ---------- */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
@@ -328,12 +336,18 @@ footer p{margin:5px 0}
   <p style="opacity:.7">© 2026 · Developed &amp; designed by <a href="https://shashankabcbuilds.in" target="_blank" rel="noopener" style="color:#dfe9e3;text-decoration:underline">Shashanka</a></p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* ---- Supabase (used for the Notices board) ---- */
+const SUPABASE_URL = 'https://yzffffubsskcjmulxpir.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZmZmZnVic3NrY2ptdWx4cGlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MzEwNzAsImV4cCI6MjEwNTMwNzA3MH0._XP5FN_9kseg0A3neJUCbVjD4XeeCU5CuN7w_ZYtOX8';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 /* =====================================================================
    1. LANGUAGE STRINGS
    ===================================================================== */
 const T = {
-  brand:{kn:'ಬೆಳಗುತ್ತಿ ಮಿತ್ರ',en:'Belagutti Mithra'},
+  brand:{kn:'ಬೆಳಗುತ್ತಿ ಮಾರುಕಟ್ಟೆ',en:'Belagutti Market'},
   menu:{kn:'ವಿಭಾಗಗಳು',en:'Sections'},
   searchPh:{kn:'ತರಕಾರಿ, ಹಣ್ಣು, ಅಂಗಡಿ ಹುಡುಕಿ…',en:'Search vegetables, fruits, shops…'},
   allLoc:{kn:'ಎಲ್ಲಾ ಊರುಗಳು',en:'All villages'},
@@ -359,6 +373,10 @@ const T = {
   hospS:{kn:'ಔಷಧಿ ಬೇಕಾದರೆ ಫಾರ್ಮ್ ತುಂಬಿ — ಮೆಡಿಕಲ್ ಅಂಗಡಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹೋಗುತ್ತದೆ.',en:'Need medicine? Fill the form — it goes to the medical shop on WhatsApp.'},
   farmT:{kn:'ಕುರಿ ಮತ್ತು ಕೋಳಿ ಸಾಕಣೆ',en:'Sheep & Hen Farming'},
   farmS:{kn:'ಸ್ಥಳೀಯ ಕುರಿ ಮತ್ತು ಕೋಳಿ ಸಾಕಣೆದಾರರಿಂದ ನೇರವಾಗಿ ಖರೀದಿಸಿ.',en:'Buy directly from local sheep and poultry farmers.'},
+  noticesT:{kn:'ಗ್ರಾಮ ಪ್ರಕಟಣೆಗಳು',en:'Village Notices'},
+  noticesS:{kn:'ಊರಿನ ಇತ್ತೀಚಿನ ಮಾಹಿತಿ ಮತ್ತು ಪ್ರಕಟಣೆಗಳು.',en:'Latest updates and announcements for the village.'},
+  noticesEmpty:{kn:'ಸದ್ಯಕ್ಕೆ ಯಾವುದೇ ಪ್ರಕಟಣೆ ಇಲ್ಲ.',en:'No notices right now.'},
+  noticesLoading:{kn:'ಲೋಡ್ ಆಗುತ್ತಿದೆ…',en:'Loading…'},
 
   order:{kn:'ಆರ್ಡರ್ ಮಾಡಿ',en:'Order'},
   call:{kn:'ಕರೆ ಮಾಡಿ',en:'Call'},
@@ -481,16 +499,16 @@ const FRUIT = [
 ];
 
 const STATIONARY = [
-  {kn:'ಶ್ರೀ ಗಣೇಶ್ ಸ್ಟೇಷನರಿ',en:'Sri Ganesh Stationery',e:'✏️',loc:'Belagutti',img:'stationary.jpg',phone:'917892443608',
+  {kn:'ಶ್ರೀ ಗಣೇಶ್ ಸ್ಟೇಷನರಿ',en:'Sri Ganesh Stationery',e:'✏️',loc:'Belagutti',img:'images/stationary.jpg',phone:'917892443608',
    owner:{kn:'ಗಣೇಶ್',en:'Ganesh'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 8 – ರಾತ್ರಿ 9',en:'8 AM – 9 PM'},
    items:{kn:'ಪುಸ್ತಕ, ಪೆನ್ನು, ನೋಟ್‌ಬುಕ್, ಜೆರಾಕ್ಸ್, ಸ್ಕೂಲ್ ಬ್ಯಾಗ್',en:'Books, pens, notebooks, xerox, school bags'}},
-  {kn:'ಬೆಳಗುತ್ತಿ ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್',en:'Belagutti Electronics',e:'🔌',loc:'Belagutti',img:'electronics.jpg',phone:'919916118623',
+  {kn:'ಬೆಳಗುತ್ತಿ ಎಲೆಕ್ಟ್ರಾನಿಕ್ಸ್',en:'Belagutti Electronics',e:'🔌',loc:'Belagutti',img:'images/electronics.jpg',phone:'919916118623',
    owner:{kn:'ನಾಗರಾಜ್',en:'Nagaraj'},timing:{kn:'ಬೆಳಿಗ್ಗೆ 9 – ರಾತ್ರಿ 8',en:'9 AM – 8 PM'},
    items:{kn:'ಬಲ್ಬ್, ವೈರ್, ಮೊಬೈಲ್ ಚಾರ್ಜರ್, ರಿಪೇರಿ',en:'Bulbs, wiring, mobile chargers, repairs'}}
 ];
 
 const HOTELS = [
-  {kn:'ಹೋಟೆಲ್ ಅಶೋಕ',en:'Hotel Ashoka',e:'🍛',loc:'Belagutti',img:'hotel.jpg',phone:'918217746004',
+  {kn:'ಶ್ರೀ ಲಕ್ಷ್ಮೀ ಖಾನಾವಳಿ',en:'Sri Lakshmi Khanavali',e:'🍛',loc:'Belagutti',img:'images/hotel1.jpg',phone:'918217746004',
    timing:{kn:'ಬೆಳಿಗ್ಗೆ 7 – ರಾತ್ರಿ 8',en:'7 AM – 8 PM'},
    food:{kn:'ಇಡ್ಲಿ, ದೋಸೆ, ಊಟ (ರೈಸ್ ಬಾತ್), ಚಪಾತಿ',en:'Idli, dosa, full meals, chapati'}}
 ];
@@ -511,25 +529,26 @@ const TEMPLES = [
 ];
 
 const FARMS = [
-  {kn:'ಕುರಿ ಸಾಕಣೆ – ಮನೋಜ್',en:'Manoj Sheep Farm',e:'🐑',type:'sheep',loc:'Belagutti',img:'sheep.jpg',phone:'917019175379',
-   owner:{kn:'ಮನೋಜ್',en:'Manoj'},
+  {kn:'ಕುರಿ ಸಾಕಣೆ – ರಮೇಶ್',en:'Ramesh Sheep Farm',e:'🐑',type:'sheep',loc:'Belagutti',img:'images/sheep1.jpg',phone:'919916118623',
+   owner:{kn:'ರಮೇಶ್',en:'Ramesh'},
    about:{kn:'ಕುರಿ ಮತ್ತು ಮೇಕೆ ಮಾರಾಟ — ಎಲ್ಲಾ ವಯಸ್ಸಿನ ಕುರಿಗಳು ಲಭ್ಯ',en:'Sheep and goats for sale — all ages available'}},
-  {kn:'ಕೋಳಿ ಸಾಕಣೆ – ಸುನಿಲ್',en:'Sunil Poultry Farm',e:'🐔',type:'hen',loc:'Guddehalli',img:'poultry.jpg',phone:'919845123670',
+  {kn:'ಕೋಳಿ ಸಾಕಣೆ – ಸುನಿಲ್',en:'Sunil Poultry Farm',e:'🐔',type:'hen',loc:'Guddehalli',img:'images/hen1.jpg',phone:'919845123670',
    owner:{kn:'ಸುನಿಲ್',en:'Sunil'},
    about:{kn:'ನಾಟಿ ಕೋಳಿ ಮತ್ತು ಮೊಟ್ಟೆ ಮಾರಾಟ',en:'Country chicken and eggs for sale'}},
-  {kn:'ಕುರಿ ಫಾರ್ಮ್ – ಬಸವರಾಜ್',en:'Basavaraj Sheep Farm',e:'🐑',type:'sheep',loc:'Malligenahalli',img:'sheep2.jpg',phone:'919980456712',
+  {kn:'ಕುರಿ ಫಾರ್ಮ್ – ಬಸವರಾಜ್',en:'Basavaraj Sheep Farm',e:'🐑',type:'sheep',loc:'Malligenahalli',img:'images/sheep2.jpg',phone:'919980456712',
    owner:{kn:'ಬಸವರಾಜ್',en:'Basavaraj'},
    about:{kn:'ದೊಡ್ಡ ಪ್ರಮಾಣದ ಕುರಿ ಸಾಕಣೆ — ಸಗಟು ಮಾರಾಟ ಲಭ್ಯ',en:'Large-scale sheep farming — bulk sales available'}}
 ];
 
 const HOSPITALS = [
   {kn:'ಸರ್ಕಾರಿ ಆಸ್ಪತ್ರೆ',en:'Government Hospital',e:'🏥',loc:'Belagutti',img:'hospital.jpg',
-   type:'govt',phone:'919916118623',medPhone:'919483691100',
-   doctor:{kn:'ಡಾ. ಮೋಹನ್',en:'Dr. Mohan'},desig:{kn:'',en:''},
+   type:'govt',phone:'919916118623',medPhone:'919916118623',
+   doctor:{kn:'ಡಾ. ಸವಿತಾ',en:'Dr. Savitha'},desig:{kn:'ಮಕ್ಕಳ ತಜ್ಞೆ (MBBS, DCH)',en:'Paediatrician (MBBS, DCH)'},
    about:{kn:'ಬೆಳಿಗ್ಗೆ 10–2, ಸಂಜೆ 6–9 · ಮಕ್ಕಳ ಚಿಕಿತ್ಸೆ ಮತ್ತು ಲಸಿಕೆ',en:'10 AM–2 PM, 6–9 PM · Child care and vaccination'}}
 ];
 
 const SECTIONS = [
+  {id:'notices',   title:'noticesT',ic:'📢'},
   {id:'vegetables',title:'vegT',ic:'🥕'},
   {id:'fruits',    title:'fruitT',ic:'🍎'},
   {id:'farming',   title:'farmT',ic:'🐑'},
@@ -734,8 +753,17 @@ function sectionShell(id, titleKey, subKey, badge){
   </section>`;
 }
 
+function noticesShell(){
+  return `<section id="notices">
+    <div class="shead"><h2>${t('noticesT')}</h2></div>
+    <p class="sub">${t('noticesS')}</p>
+    <div id="noticesList"><p class="hint">${t('noticesLoading')}</p></div>
+  </section>`;
+}
+
 function renderAll(){
   $('#main').innerHTML =
+    noticesShell() +
     sectionShell('vegetables','vegT','vegS', t('allVillages')) +
     sectionShell('fruits','fruitT','fruitS', t('allVillages')) +
     sectionShell('farming','farmT','farmS', t('allVillages')) +
@@ -751,6 +779,7 @@ function renderAll(){
   fill('hotels', HOTELS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hotel', placeCard);
   fill('temples', TEMPLES.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'temple', placeCard);
   fill('hospital', HOSPITALS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hosp', placeCard);
+  renderNotices();
 }
 
 function fill(id, rows, kind, tpl){
@@ -1165,6 +1194,51 @@ function sendMedicine(){
 }
 
 /* =====================================================================
+   12. NOTICES (Supabase)
+   ===================================================================== */
+let noticesCache = [];
+
+async function loadNotices(){
+  try{
+    const { data, error } = await sb
+      .from('notices')
+      .select('*')
+      .eq('active', true)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    noticesCache = data || [];
+  } catch (e){
+    console.error('Failed to load notices:', e);
+    noticesCache = [];
+  }
+  renderNotices();
+}
+
+function renderNotices(){
+  const el = $('#noticesList');
+  if (!el) return; // section not in the DOM yet
+  if (!noticesCache.length){
+    el.innerHTML = `<div class="empty">${t('noticesEmpty')}</div>`;
+    return;
+  }
+  el.innerHTML = noticesCache.map(noticeCard).join('');
+}
+
+function noticeCard(n){
+  const title = lang === 'kn' ? n.title_kn : n.title_en;
+  const body  = lang === 'kn' ? n.body_kn  : n.body_en;
+  const date  = new Date(n.created_at).toLocaleDateString(
+    lang === 'kn' ? 'kn-IN' : 'en-IN',
+    { day: 'numeric', month: 'short', year: 'numeric' }
+  );
+  return `<div class="notice">
+    <div class="ndate">📅 ${esc(date)}</div>
+    <b>${esc(title)}</b>
+    <p>${esc(body)}</p>
+  </div>`;
+}
+
+/* =====================================================================
    11. BOOT
    ===================================================================== */
 buildNav();
@@ -1173,6 +1247,7 @@ buildHero();
 renderAll();
 setLang('kn');
 startHero();
+loadNotices();
 </script>
 </body>
 </html>
