@@ -480,23 +480,8 @@ const CROPS = {
   Jeenahalli:[{kn:'ಕ್ಯಾರೆಟ್',en:'Carrot',e:'🥕'},{kn:'ಸೂರ್ಯಕಾಂತಿ',en:'Sunflower',e:'🌻'},{kn:'ಮಾವು',en:'Mango',e:'🥭'},{kn:'ರಾಗಿ',en:'Ragi',e:'🌾'}]
 };
 
-const VEG = [
-  {kn:'ಟೊಮೇಟೊ',en:'Tomato',e:'🍅',farmer:{kn:'ಅರುಣ್',en:'Arun'},loc:'Belagutti',img:'tomato.jpg',phone:'918217286041',rate:'₹25 / kg'},
-  {kn:'ಮೆಣಸಿನಕಾಯಿ',en:'Chilli',e:'🍅',farmer:{kn:'ಶಿವಕುಮಾರ್',en:'Shivakumar'},loc:'Guddehalli',img:'chilli.jpg',phone:'919845123670',rate:'₹27 / kg'},
-  {kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Malligenahalli',img:'onion.jpg',phone:'918217286041',rate:'₹30 / kg'},
-  {kn:'ಈರುಳ್ಳಿ',en:'Onion',e:'🧅',farmer:{kn:'ಪ್ರಕಾಶ್',en:'Prakash'},loc:'Belagutti',img:'onion.jpg',phone:'919980456712',rate:'₹32 / kg'},
-  {kn:'ಆಲೂಗಡ್ಡೆ',en:'Potato',e:'🥔',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'potato.jpg',phone:'917892443608',rate:'₹28 / kg'},
-  {kn:'ಕ್ಯಾರೆಟ್',en:'Carrot',e:'🥕',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'carrot.jpg',phone:'917019175379',rate:'₹35 / kg'},
-  {kn:'ಬದನೆಕಾಯಿ',en:'Brinjal',e:'🍆',farmer:{kn:'ಲೋಕೇಶ್',en:'Lokesh'},loc:'Belagutti',img:'brinjal.jpg',phone:'919148628502',rate:'₹22 / kg'},
-  {kn:'ಎಲೆಕೋಸು',en:'Cabbage',e:'🥬',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'cauli.jpg',phone:'917353109581',rate:'₹20 / kg'}
-];
-const FRUIT = [
-  {kn:'ಮಾವು',en:'Mango',e:'🥭',farmer:{kn:'ಸುರೇಶ್',en:'Suresh'},loc:'Belagutti',img:'mango.jpg',phone:'919606778356',rate:'₹60 / kg'},
-  {kn:'ಮಾವು',en:'Mango',e:'🥭',farmer:{kn:'ಗೋಪಾಲ್',en:'Gopal'},loc:'Jeenahalli',img:'mango.jpg',phone:'919742081563',rate:'₹55 / kg'},
-  {kn:'ಬಾಳೆಹಣ್ಣು',en:'Banana',e:'🍌',farmer:{kn:'ರವಿ',en:'Ravi'},loc:'Guddehalli',img:'banana.jpg',phone:'919902872691',rate:'₹40 / dozen'},
-  {kn:'ಪಪ್ಪಾಯಿ',en:'Papaya',e:'🍎',farmer:{kn:'ಮಹೇಶ್',en:'Mahesh'},loc:'Jeenahalli',img:'pappaya.jpg',phone:'919008239032',rate:'₹120 / kg'},
-  {kn:'ಕಲ್ಲಂಗಡಿ',en:'Watermelon',e:'🍊',farmer:{kn:'ಕಿರಣ್',en:'Kiran'},loc:'Malligenahalli',img:'watermelon.jpg',phone:'918217679427',rate:'₹70 / kg'}
-];
+let VEG = [];
+let FRUIT = [];
 
 const STATIONARY = [
   {kn:'ಶ್ರೀ ಗಣೇಶ್ ಸ್ಟೇಷನರಿ',en:'Sri Ganesh Stationery',e:'✏️',loc:'Belagutti',img:'images/stationary.jpg',phone:'917892443608',
@@ -1194,7 +1179,37 @@ function sendMedicine(){
 }
 
 /* =====================================================================
-   12. NOTICES (Supabase)
+   12. PRODUCE — vegetables & fruits (Supabase)
+   ===================================================================== */
+function rowToProduce(r){
+  return {
+    kn: r.name_kn, en: r.name_en, e: r.emoji,
+    farmer: { kn: r.farmer_kn, en: r.farmer_en },
+    loc: r.village, img: r.img || '', phone: r.phone
+  };
+}
+
+async function loadProduce(){
+  try{
+    const { data, error } = await sb
+      .from('produce')
+      .select('*')
+      .eq('active', true)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    const rows = data || [];
+    VEG = rows.filter(r => r.type === 'veg').map(rowToProduce);
+    FRUIT = rows.filter(r => r.type === 'fruit').map(rowToProduce);
+  } catch (e){
+    console.error('Failed to load produce:', e);
+    VEG = []; FRUIT = [];
+  }
+  renderAll();
+  onSearch();
+}
+
+/* =====================================================================
+   13. NOTICES (Supabase)
    ===================================================================== */
 let noticesCache = [];
 
@@ -1248,6 +1263,7 @@ renderAll();
 setLang('kn');
 startHero();
 loadNotices();
+loadProduce();
 </script>
 </body>
 </html>
