@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Belagutti Market – Admin</title>
+<title>Nammoora Mithra – Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -46,10 +46,10 @@ button.btn{
 .row .btn{margin-top:0;padding:8px 13px;font-size:12.5px}
 .hidden{display:none}
 .badge{font-size:11px;background:#fdecc8;color:#8a5a12;padding:2px 8px;border-radius:999px;font-weight:600}
-.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .tabs button{
-  flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
-  font-weight:600;font-size:13.5px;cursor:pointer;color:var(--ink-soft);
+  flex:1 1 30%;min-width:100px;padding:11px 6px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
+  font-weight:600;font-size:12.5px;cursor:pointer;color:var(--ink-soft);
 }
 .tabs button.on{border-color:var(--leaf);background:#f1f8f4;color:var(--leaf)}
 select{
@@ -66,7 +66,7 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
 <body>
 
 <header>
-  <b>🌾 Belagutti Market — Admin</b>
+  <b>🌾 Nammoora Mithra — Admin</b>
   <button id="logoutBtn" class="hidden" onclick="logout()">Log out</button>
 </header>
 
@@ -85,9 +85,26 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
 
   <!-- ADMIN PANEL -->
   <div id="panelView" class="hidden">
+    <div class="card" style="padding:14px;margin-bottom:14px">
+      <label for="adminVillageFilter" style="margin-top:0">🏘️ Village filter (applies to every tab below)</label>
+      <select id="adminVillageFilter" onchange="onAdminVillageChange()">
+        <option value="">All villages</option>
+        <option value="Belagutti">Belagutti</option>
+        <option value="Malligenahalli">Malligenahalli</option>
+        <option value="Guddehalli">Guddehalli</option>
+        <option value="Jeenahalli">Jeenahalli</option>
+        <option value="Yaraganal">Yaraganal</option>
+      </select>
+    </div>
+
     <div class="tabs">
       <button id="tabBtnNotices" class="on" onclick="switchTab('notices')">📢 Notices</button>
       <button id="tabBtnFarmers" onclick="switchTab('farmers')">🥕 Farmers</button>
+      <button id="tabBtnListings" onclick="switchTab('listings')">📋 Listings</button>
+      <button id="tabBtnHome" onclick="switchTab('home')">🖼️ Home</button>
+      <button id="tabBtnEmergency" onclick="switchTab('emergency')">🚑 Emergency</button>
+      <button id="tabBtnPower" onclick="switchTab('power')">⚡ Power</button>
+      <button id="tabBtnBus" onclick="switchTab('bus')">🚌 Bus</button>
     </div>
 
     <!-- NOTICES TAB -->
@@ -104,6 +121,13 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
         <textarea id="bodyKn" rows="3" placeholder="ವಿವರ"></textarea>
         <label for="bodyEn">Message (English)</label>
         <textarea id="bodyEn" rows="3" placeholder="Details"></textarea>
+
+        <label for="noticeImg">Image file name (optional)</label>
+        <input id="noticeImg" placeholder="notice1.jpg">
+
+        <label for="scheduledFor">Publish later (optional)</label>
+        <input id="scheduledFor" type="datetime-local">
+        <p class="sub" style="margin:4px 0 0">Leave blank to publish immediately.</p>
 
         <p class="err" id="formErr"></p>
         <div class="row">
@@ -162,6 +186,7 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
           <option value="Malligenahalli">Malligenahalli</option>
           <option value="Guddehalli">Guddehalli</option>
           <option value="Jeenahalli">Jeenahalli</option>
+          <option value="Yaraganal">Yaraganal</option>
         </select>
 
         <label for="pPhone">Phone number (10 digits, no +91)</label>
@@ -180,7 +205,246 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
       <div class="card">
         <h2>Existing farmer listings</h2>
         <p class="sub">Vegetables and fruits together. Inactive listings are hidden from the public site.</p>
+        <input id="produceSearch" placeholder="🔍 Search by crop, farmer or village…" oninput="renderProduceList()" style="margin-bottom:12px">
         <div id="produceList"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- LISTINGS TAB (Farming, Stationery, Hotels, Temples, Hospital, Organic) -->
+    <div id="tabListings" class="hidden">
+      <div class="card">
+        <h2>Choose a category</h2>
+        <p class="sub">Each category has its own list below.</p>
+        <select id="lCategory" onchange="onCategoryChange()">
+          <option value="farm">🐑 Sheep &amp; Hen Farming</option>
+          <option value="stationary">✏️ Stationery Shops</option>
+          <option value="hotel">🍛 Hotels</option>
+          <option value="temple">🛕 Temples</option>
+          <option value="hospital">🏥 Hospital &amp; Medicine</option>
+          <option value="organic">🌿 Organic Products</option>
+          <option value="vet">🐄 Veterinary Doctor</option>
+          <option value="worker_coconut">🌴 Coconut Tree Workers</option>
+          <option value="worker_furniture">🪑 Furniture Makers</option>
+          <option value="worker_tractor">🚜 Tractor Rental</option>
+          <option value="worker_taxi">🚕 Taxi Rental</option>
+          <option value="worker_borewell">🕳️ Borewell Point Finder</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <h2 id="lFormTitle">Add listing</h2>
+        <p class="sub">Fill in both languages where shown.</p>
+
+        <div class="grid2">
+          <div>
+            <label for="lNameKn">Name (Kannada)</label>
+            <input id="lNameKn">
+          </div>
+          <div>
+            <label for="lNameEn">Name (English)</label>
+            <input id="lNameEn">
+          </div>
+        </div>
+
+        <label for="lEmoji">Emoji (shown on the card)</label>
+        <input id="lEmoji" maxlength="4">
+
+        <div id="lOwnerWrap" class="grid2">
+          <div>
+            <label id="lOwnerKnLabel" for="lOwnerKn">Owner name (Kannada)</label>
+            <input id="lOwnerKn">
+          </div>
+          <div>
+            <label id="lOwnerEnLabel" for="lOwnerEn">Owner name (English)</label>
+            <input id="lOwnerEn">
+          </div>
+        </div>
+
+        <div id="lRoleWrap" class="grid2">
+          <div>
+            <label id="lRoleKnLabel" for="lRoleKn">Details (Kannada)</label>
+            <input id="lRoleKn">
+          </div>
+          <div>
+            <label id="lRoleEnLabel" for="lRoleEn">Details (English)</label>
+            <input id="lRoleEn">
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label id="lAboutKnLabel" for="lAboutKn">About (Kannada)</label>
+            <textarea id="lAboutKn" rows="2"></textarea>
+          </div>
+          <div>
+            <label id="lAboutEnLabel" for="lAboutEn">About (English)</label>
+            <textarea id="lAboutEn" rows="2"></textarea>
+          </div>
+        </div>
+
+        <label for="lVillage">Village</label>
+        <select id="lVillage">
+          <option value="Belagutti">Belagutti</option>
+          <option value="Malligenahalli">Malligenahalli</option>
+          <option value="Guddehalli">Guddehalli</option>
+          <option value="Jeenahalli">Jeenahalli</option>
+          <option value="Yaraganal">Yaraganal</option>
+        </select>
+
+        <label for="lPhone">Phone number (10 digits, no +91)</label>
+        <input id="lPhone" inputmode="numeric" maxlength="10" placeholder="9916118623">
+
+        <div id="lMapWrap">
+          <label for="lMap">Google Maps link</label>
+          <input id="lMap" placeholder="https://maps.app.goo.gl/...">
+        </div>
+
+        <label for="lImg">Photo file name (optional)</label>
+        <input id="lImg" placeholder="example.jpg">
+
+        <p class="err" id="lFormErr"></p>
+        <div class="row">
+          <button class="btn primary" onclick="saveListing()">Save listing</button>
+          <button class="btn ghost hidden" id="lCancelEditBtn" onclick="cancelListingEdit()">Cancel edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Existing listings</h2>
+        <p class="sub">Showing entries for the category selected above.</p>
+        <div id="listingList"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- HOME TAB (hero carousel images) -->
+    <div id="tabHome" class="hidden">
+      <div class="card">
+        <h2 id="hFormTitle">Add a home page slide</h2>
+        <p class="sub">Aim for 5–6 slides. Order controls the position in the carousel (lower number shows first).</p>
+
+        <div class="grid2">
+          <div><label for="hTitleKn">Title (Kannada)</label><input id="hTitleKn"></div>
+          <div><label for="hTitleEn">Title (English)</label><input id="hTitleEn"></div>
+        </div>
+        <div class="grid2">
+          <div><label for="hSubKn">Subtitle (Kannada, optional)</label><input id="hSubKn"></div>
+          <div><label for="hSubEn">Subtitle (English, optional)</label><input id="hSubEn"></div>
+        </div>
+        <label for="hEmoji">Emoji</label>
+        <input id="hEmoji" maxlength="4" placeholder="🌾">
+        <label for="hImg">Image file name</label>
+        <input id="hImg" placeholder="hero1.jpg">
+        <label for="hOrder">Order (0 = first)</label>
+        <input id="hOrder" type="number" value="0" min="0">
+
+        <p class="err" id="hFormErr"></p>
+        <div class="row">
+          <button class="btn primary" onclick="saveHeroSlide()">Save slide</button>
+          <button class="btn ghost hidden" id="hCancelEditBtn" onclick="cancelHeroEdit()">Cancel edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Existing slides</h2>
+        <div id="heroList"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- EMERGENCY TAB -->
+    <div id="tabEmergency" class="hidden">
+      <div class="card">
+        <h2>Emergency numbers</h2>
+        <p class="sub">These three always show on the main site. Just fill in the numbers.</p>
+        <div id="emergencyForm"><p class="sub">Loading…</p></div>
+        <p class="err" id="eFormErr"></p>
+        <button class="btn primary" onclick="saveEmergencyContacts()">Save all three</button>
+      </div>
+    </div>
+
+    <!-- POWER TAB -->
+    <div id="tabPower" class="hidden">
+      <div class="card">
+        <h2 id="pwFormTitle">Add / update power status</h2>
+        <p class="sub">One entry per village per outage.</p>
+
+        <label for="pwVillage">Village</label>
+        <select id="pwVillage">
+          <option value="Belagutti">Belagutti</option>
+          <option value="Malligenahalli">Malligenahalli</option>
+          <option value="Guddehalli">Guddehalli</option>
+          <option value="Jeenahalli">Jeenahalli</option>
+          <option value="Yaraganal">Yaraganal</option>
+        </select>
+
+        <label for="pwStatus">Status</label>
+        <select id="pwStatus">
+          <option value="on">⚡ Power ON</option>
+          <option value="off">⚠️ Power OFF</option>
+        </select>
+
+        <div class="grid2">
+          <div><label for="pwOffTime">Power went off at</label><input id="pwOffTime" placeholder="10:00 AM"></div>
+          <div><label for="pwExpected">Expected back by</label><input id="pwExpected" placeholder="2:00 PM"></div>
+        </div>
+        <div class="grid2">
+          <div><label for="pwDescKn">Description (Kannada, optional)</label><textarea id="pwDescKn" rows="2"></textarea></div>
+          <div><label for="pwDescEn">Description (English, optional)</label><textarea id="pwDescEn" rows="2"></textarea></div>
+        </div>
+
+        <p class="err" id="pwFormErr"></p>
+        <div class="row">
+          <button class="btn primary" onclick="savePower()">Save</button>
+          <button class="btn ghost hidden" id="pwCancelEditBtn" onclick="cancelPowerEdit()">Cancel edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Existing updates</h2>
+        <div id="powerList"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
+
+    <!-- BUS TAB -->
+    <div id="tabBus" class="hidden">
+      <div class="card">
+        <h2 id="bsFormTitle">Add / update a bus timing</h2>
+
+        <label for="bsName">Bus name</label>
+        <input id="bsName" placeholder="KSRTC Bus">
+
+        <label for="bsVillage">From (village)</label>
+        <select id="bsVillage">
+          <option value="Belagutti">Belagutti</option>
+          <option value="Malligenahalli">Malligenahalli</option>
+          <option value="Guddehalli">Guddehalli</option>
+          <option value="Jeenahalli">Jeenahalli</option>
+          <option value="Yaraganal">Yaraganal</option>
+        </select>
+
+        <label for="bsTo">To</label>
+        <input id="bsTo" placeholder="Davanagere">
+
+        <div class="grid2">
+          <div><label for="bsDep">Departure time</label><input id="bsDep" placeholder="9:00 AM"></div>
+          <div><label for="bsArr">Arrival time (optional)</label><input id="bsArr" placeholder="10:30 AM"></div>
+        </div>
+
+        <label for="bsStatus">Status</label>
+        <select id="bsStatus">
+          <option value="coming">🟢 Coming Today</option>
+          <option value="not_coming">🔴 Not Coming Today</option>
+        </select>
+
+        <p class="err" id="bsFormErr"></p>
+        <div class="row">
+          <button class="btn primary" onclick="saveBus()">Save</button>
+          <button class="btn ghost hidden" id="bsCancelEditBtn" onclick="cancelBusEdit()">Cancel edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Existing bus timings</h2>
+        <div id="busList"><p class="sub">Loading…</p></div>
       </div>
     </div>
   </div>
@@ -196,16 +460,32 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 let editingNoticeId = null;
+
+/* ---------- Global village filter (applies across Farmers/Listings/Power/Bus) ---------- */
+let adminVillage = '';
+function onAdminVillageChange(){
+  adminVillage = $('#adminVillageFilter').value;
+  renderProduceList();
+  loadListingList();
+  loadPowerUpdates();
+  loadBusTimings();
+}
 let editingProduceId = null;
 
 /* ---------- Tabs ---------- */
+const TAB_IDS = ['notices','farmers','listings','home','emergency','power','bus'];
 function switchTab(name){
-  const isNotices = name === 'notices';
-  $('#tabNotices').classList.toggle('hidden', !isNotices);
-  $('#tabFarmers').classList.toggle('hidden', isNotices);
-  $('#tabBtnNotices').classList.toggle('on', isNotices);
-  $('#tabBtnFarmers').classList.toggle('on', !isNotices);
+  TAB_IDS.forEach(id => {
+    $('#tab' + capitalize(id)).classList.toggle('hidden', id !== name);
+    $('#tabBtn' + capitalize(id)).classList.toggle('on', id === name);
+  });
+  if (name === 'listings') loadListingList();
+  if (name === 'home') loadHeroSlides();
+  if (name === 'emergency') loadEmergencyContacts();
+  if (name === 'power') loadPowerUpdates();
+  if (name === 'bus') loadBusTimings();
 }
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
 
 /* ---------- Auth ---------- */
 async function checkSession(){
@@ -228,6 +508,7 @@ function showPanel(){
   $('#logoutBtn').classList.remove('hidden');
   loadNotices();
   loadProduce();
+  loadListingList();
 }
 
 async function login(){
@@ -269,9 +550,13 @@ async function loadNotices(){
 
 function rowHtml(n){
   const date = new Date(n.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const isFuture = n.scheduled_for && new Date(n.scheduled_for) > new Date();
+  const schedBadge = isFuture
+    ? `<span class="badge">Scheduled: ${esc(new Date(n.scheduled_for).toLocaleString('en-IN', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' }))}</span>`
+    : '';
   return `<div class="notice-item">
-    <b>${esc(n.title_en)}</b> ${n.active ? '' : '<span class="badge">Hidden</span>'}
-    <div class="meta">${esc(date)} · ${esc(n.title_kn)}</div>
+    <b>${esc(n.title_en)}</b> ${n.active ? '' : '<span class="badge">Hidden</span>'} ${schedBadge}
+    <div class="meta">${esc(date)} · ${esc(n.title_kn)}${n.image ? ' · 🖼️ has image' : ''}</div>
     <p>${esc(n.body_en)}</p>
     <div class="row">
       <button class="btn ghost" onclick="editNotice('${n.id}')">Edit</button>
@@ -286,6 +571,8 @@ async function saveNotice(){
   const titleEn = $('#titleEn').value.trim();
   const bodyKn = $('#bodyKn').value.trim();
   const bodyEn = $('#bodyEn').value.trim();
+  const image = $('#noticeImg').value.trim();
+  const scheduledRaw = $('#scheduledFor').value; // 'YYYY-MM-DDTHH:mm' or ''
   const err = $('#formErr');
   err.textContent = '';
 
@@ -294,14 +581,17 @@ async function saveNotice(){
     return;
   }
 
+  const payload = {
+    title_kn: titleKn, title_en: titleEn, body_kn: bodyKn, body_en: bodyEn,
+    image: image || null,
+    scheduled_for: scheduledRaw ? new Date(scheduledRaw).toISOString() : null
+  };
+
   if (editingNoticeId){
-    const { error } = await sb.from('notices')
-      .update({ title_kn: titleKn, title_en: titleEn, body_kn: bodyKn, body_en: bodyEn })
-      .eq('id', editingNoticeId);
+    const { error } = await sb.from('notices').update(payload).eq('id', editingNoticeId);
     if (error){ err.textContent = error.message; return; }
   } else {
-    const { error } = await sb.from('notices')
-      .insert({ title_kn: titleKn, title_en: titleEn, body_kn: bodyKn, body_en: bodyEn, active: true });
+    const { error } = await sb.from('notices').insert({ ...payload, active: true });
     if (error){ err.textContent = error.message; return; }
   }
 
@@ -317,9 +607,17 @@ async function editNotice(id){
   $('#titleEn').value = data.title_en;
   $('#bodyKn').value = data.body_kn;
   $('#bodyEn').value = data.body_en;
+  $('#noticeImg').value = data.image || '';
+  $('#scheduledFor').value = data.scheduled_for ? toLocalInputValue(data.scheduled_for) : '';
   $('#formTitle').textContent = 'Edit notice';
   $('#cancelEditBtn').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toLocalInputValue(isoString){
+  const d = new Date(isoString);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function cancelEdit(){ clearForm(); }
@@ -330,6 +628,8 @@ function clearForm(){
   $('#titleEn').value = '';
   $('#bodyKn').value = '';
   $('#bodyEn').value = '';
+  $('#noticeImg').value = '';
+  $('#scheduledFor').value = '';
   $('#formErr').textContent = '';
   $('#formTitle').textContent = 'Post a new notice';
   $('#cancelEditBtn').classList.add('hidden');
@@ -349,6 +649,8 @@ async function deleteNotice(id){
 }
 
 /* ---------- Farmers (produce) CRUD ---------- */
+let produceCache = [];
+
 async function loadProduce(){
   const el = $('#produceList');
   el.innerHTML = '<p class="sub">Loading…</p>';
@@ -361,11 +663,34 @@ async function loadProduce(){
     el.innerHTML = `<p class="err">Could not load farmer listings: ${esc(error.message)}</p>`;
     return;
   }
-  if (!data.length){
+  produceCache = data || [];
+  renderProduceList();
+}
+
+function renderProduceList(){
+  const el = $('#produceList');
+  const q = ($('#produceSearch').value || '').trim().toLowerCase();
+
+  let rows = adminVillage ? produceCache.filter(p => p.village === adminVillage) : produceCache;
+  if (q){
+    rows = rows.filter(p =>
+      p.name_en.toLowerCase().includes(q) ||
+      p.name_kn.includes(q) ||
+      p.farmer_en.toLowerCase().includes(q) ||
+      p.farmer_kn.includes(q) ||
+      p.village.toLowerCase().includes(q)
+    );
+  }
+
+  if (!produceCache.length){
     el.innerHTML = '<p class="sub">No farmer listings yet. Add one above.</p>';
     return;
   }
-  el.innerHTML = data.map(produceRowHtml).join('');
+  if (!rows.length){
+    el.innerHTML = '<p class="sub">No matches for the current filter/search.</p>';
+    return;
+  }
+  el.innerHTML = rows.map(produceRowHtml).join('');
 }
 
 function produceRowHtml(p){
@@ -468,6 +793,504 @@ async function deleteProduce(id){
   const { error } = await sb.from('produce').delete().eq('id', id);
   if (error){ alert(error.message); return; }
   loadProduce();
+}
+
+/* ---------- Listings (Farming, Stationery, Hotels, Temples, Hospital, Vet, Organic, Workers) ---------- */
+const CATEGORY_CONFIG = {
+  farm:             { ownerLabel: 'Farmer name',  roleLabel: null,            aboutLabel: 'Description',         showMap: false },
+  stationary:       { ownerLabel: 'Owner name',   roleLabel: 'Items sold',    aboutLabel: 'Timing',               showMap: false },
+  hotel:            { ownerLabel: null,           roleLabel: 'Food served',   aboutLabel: 'Timing',               showMap: false },
+  temple:           { ownerLabel: null,           roleLabel: 'Pooja timing',  aboutLabel: 'Description',          showMap: true  },
+  hospital:         { ownerLabel: 'Doctor name',  roleLabel: 'Designation',   aboutLabel: 'Timing / description', showMap: false },
+  organic:          { ownerLabel: 'Seller name',  roleLabel: 'Products sold', aboutLabel: 'Description',          showMap: false },
+  vet:              { ownerLabel: 'Vet doctor name', roleLabel: 'Available time', aboutLabel: 'Description',      showMap: false },
+  worker_coconut:   { ownerLabel: 'Worker name',  roleLabel: 'Available time',aboutLabel: 'Description',          showMap: false },
+  worker_furniture: { ownerLabel: 'Maker name',   roleLabel: 'Services',      aboutLabel: 'Description',          showMap: false },
+  worker_tractor:   { ownerLabel: 'Owner name',   roleLabel: 'Tractor details',aboutLabel: 'Rental information',  showMap: false },
+  worker_taxi:      { ownerLabel: 'Driver name',  roleLabel: 'Vehicle details',aboutLabel: 'Available time',      showMap: false },
+  worker_borewell:  { ownerLabel: 'Name',         roleLabel: 'Service details',aboutLabel: 'Description',         showMap: false }
+};
+
+let editingListingId = null;
+
+function onCategoryChange(){
+  const cfg = CATEGORY_CONFIG[$('#lCategory').value];
+
+  $('#lOwnerWrap').classList.toggle('hidden', !cfg.ownerLabel);
+  if (cfg.ownerLabel){
+    $('#lOwnerKnLabel').textContent = cfg.ownerLabel + ' (Kannada)';
+    $('#lOwnerEnLabel').textContent = cfg.ownerLabel + ' (English)';
+  }
+
+  $('#lRoleWrap').classList.toggle('hidden', !cfg.roleLabel);
+  if (cfg.roleLabel){
+    $('#lRoleKnLabel').textContent = cfg.roleLabel + ' (Kannada)';
+    $('#lRoleEnLabel').textContent = cfg.roleLabel + ' (English)';
+  }
+
+  $('#lAboutKnLabel').textContent = cfg.aboutLabel + ' (Kannada)';
+  $('#lAboutEnLabel').textContent = cfg.aboutLabel + ' (English)';
+
+  $('#lMapWrap').classList.toggle('hidden', !cfg.showMap);
+
+  clearListingForm();
+  loadListingList();
+}
+
+async function loadListingList(){
+  const category = $('#lCategory').value;
+  const el = $('#listingList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+
+  let query = sb.from('listings').select('*').eq('category', category);
+  if (adminVillage) query = query.eq('village', adminVillage);
+  const { data, error } = await query.order('created_at', { ascending: false });
+
+  if (error){
+    el.innerHTML = `<p class="err">Could not load listings: ${esc(error.message)}</p>`;
+    return;
+  }
+  if (!data.length){
+    el.innerHTML = '<p class="sub">No listings yet for this filter. Add one above.</p>';
+    return;
+  }
+  el.innerHTML = data.map(listingRowHtml).join('');
+}
+
+function listingRowHtml(r){
+  const sub = [r.owner_en, r.role_en].filter(Boolean).join(' · ');
+  return `<div class="notice-item">
+    <b>${esc(r.emoji || '')} ${esc(r.name_en)}</b> ${r.active ? '' : '<span class="badge">Hidden</span>'}
+    <div class="meta">${esc(sub)}${sub ? ' · ' : ''}${esc(r.village)} · ${esc(r.phone)}</div>
+    <div class="row">
+      <button class="btn ghost" onclick="editListing('${r.id}')">Edit</button>
+      <button class="btn ghost" onclick="toggleListingActive('${r.id}', ${r.active})">${r.active ? 'Hide' : 'Show'}</button>
+      <button class="btn danger" onclick="deleteListing('${r.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+async function saveListing(){
+  const category = $('#lCategory').value;
+  const cfg = CATEGORY_CONFIG[category];
+  const nameKn = $('#lNameKn').value.trim();
+  const nameEn = $('#lNameEn').value.trim();
+  const emoji = $('#lEmoji').value.trim() || '📍';
+  const ownerKn = $('#lOwnerKn').value.trim();
+  const ownerEn = $('#lOwnerEn').value.trim();
+  const roleKn = $('#lRoleKn').value.trim();
+  const roleEn = $('#lRoleEn').value.trim();
+  const aboutKn = $('#lAboutKn').value.trim();
+  const aboutEn = $('#lAboutEn').value.trim();
+  const village = $('#lVillage').value;
+  const phone = $('#lPhone').value.trim();
+  const map = $('#lMap').value.trim();
+  const img = $('#lImg').value.trim();
+  const err = $('#lFormErr');
+  err.textContent = '';
+
+  if (!nameKn || !nameEn || !phone){
+    err.textContent = 'Please fill in the name (both languages) and phone number.';
+    return;
+  }
+  if (!/^[0-9]{10}$/.test(phone)){
+    err.textContent = 'Phone number must be exactly 10 digits.';
+    return;
+  }
+  if (cfg.showMap && !map){
+    err.textContent = 'Please add a Google Maps link for this temple.';
+    return;
+  }
+
+  const payload = {
+    category, name_kn: nameKn, name_en: nameEn, emoji,
+    owner_kn: cfg.ownerLabel ? ownerKn : null,
+    owner_en: cfg.ownerLabel ? ownerEn : null,
+    role_kn: cfg.roleLabel ? roleKn : null,
+    role_en: cfg.roleLabel ? roleEn : null,
+    about_kn: aboutKn || null,
+    about_en: aboutEn || null,
+    village, phone,
+    map_url: cfg.showMap ? map : null,
+    img: img || null
+  };
+
+  if (editingListingId){
+    const { error } = await sb.from('listings').update(payload).eq('id', editingListingId);
+    if (error){ err.textContent = error.message; return; }
+  } else {
+    const { error } = await sb.from('listings').insert({ ...payload, active: true });
+    if (error){ err.textContent = error.message; return; }
+  }
+
+  clearListingForm();
+  loadListingList();
+}
+
+async function editListing(id){
+  const { data, error } = await sb.from('listings').select('*').eq('id', id).single();
+  if (error){ $('#lFormErr').textContent = error.message; return; }
+
+  $('#lCategory').value = data.category;
+  onCategoryChange(); // resets labels/visibility, then we fill values below
+  editingListingId = id;
+
+  $('#lNameKn').value = data.name_kn;
+  $('#lNameEn').value = data.name_en;
+  $('#lEmoji').value = data.emoji || '';
+  $('#lOwnerKn').value = data.owner_kn || '';
+  $('#lOwnerEn').value = data.owner_en || '';
+  $('#lRoleKn').value = data.role_kn || '';
+  $('#lRoleEn').value = data.role_en || '';
+  $('#lAboutKn').value = data.about_kn || '';
+  $('#lAboutEn').value = data.about_en || '';
+  $('#lVillage').value = data.village;
+  $('#lPhone').value = data.phone;
+  $('#lMap').value = data.map_url || '';
+  $('#lImg').value = data.img || '';
+
+  $('#lFormTitle').textContent = 'Edit listing';
+  $('#lCancelEditBtn').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelListingEdit(){ clearListingForm(); }
+
+function clearListingForm(){
+  editingListingId = null;
+  $('#lNameKn').value = '';
+  $('#lNameEn').value = '';
+  $('#lEmoji').value = '';
+  $('#lOwnerKn').value = '';
+  $('#lOwnerEn').value = '';
+  $('#lRoleKn').value = '';
+  $('#lRoleEn').value = '';
+  $('#lAboutKn').value = '';
+  $('#lAboutEn').value = '';
+  $('#lVillage').value = 'Belagutti';
+  $('#lPhone').value = '';
+  $('#lMap').value = '';
+  $('#lImg').value = '';
+  $('#lFormErr').textContent = '';
+  $('#lFormTitle').textContent = 'Add listing';
+  $('#lCancelEditBtn').classList.add('hidden');
+}
+
+async function toggleListingActive(id, isActive){
+  const { error } = await sb.from('listings').update({ active: !isActive }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadListingList();
+}
+
+async function deleteListing(id){
+  if (!confirm('Delete this listing permanently?')) return;
+  const { error } = await sb.from('listings').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadListingList();
+}
+
+/* ---------- Home page hero slides ---------- */
+let editingHeroId = null;
+
+async function loadHeroSlides(){
+  const el = $('#heroList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+  const { data, error } = await sb.from('hero_slides').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: true });
+  if (error){ el.innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  if (!data.length){ el.innerHTML = '<p class="sub">No slides yet. Add one above.</p>'; return; }
+  el.innerHTML = data.map(heroRowHtml).join('');
+}
+function heroRowHtml(r){
+  return `<div class="notice-item">
+    <b>${esc(r.emoji || '')} ${esc(r.title_en)}</b> ${r.active ? '' : '<span class="badge">Hidden</span>'}
+    <div class="meta">Order: ${r.sort_order}${r.img ? ' · 🖼️ ' + esc(r.img) : ''}</div>
+    <div class="row">
+      <button class="btn ghost" onclick="editHeroSlide('${r.id}')">Edit</button>
+      <button class="btn ghost" onclick="toggleHeroActive('${r.id}', ${r.active})">${r.active ? 'Hide' : 'Show'}</button>
+      <button class="btn danger" onclick="deleteHeroSlide('${r.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+async function saveHeroSlide(){
+  const titleKn = $('#hTitleKn').value.trim();
+  const titleEn = $('#hTitleEn').value.trim();
+  const subKn = $('#hSubKn').value.trim();
+  const subEn = $('#hSubEn').value.trim();
+  const emoji = $('#hEmoji').value.trim() || '🌾';
+  const img = $('#hImg').value.trim();
+  const order = parseInt($('#hOrder').value) || 0;
+  const err = $('#hFormErr');
+  err.textContent = '';
+  if (!titleKn || !titleEn){ err.textContent = 'Please fill in the title in both languages.'; return; }
+
+  const payload = { title_kn: titleKn, title_en: titleEn, subtitle_kn: subKn || null, subtitle_en: subEn || null, emoji, img: img || null, sort_order: order };
+  if (editingHeroId){
+    const { error } = await sb.from('hero_slides').update(payload).eq('id', editingHeroId);
+    if (error){ err.textContent = error.message; return; }
+  } else {
+    const { error } = await sb.from('hero_slides').insert({ ...payload, active: true });
+    if (error){ err.textContent = error.message; return; }
+  }
+  clearHeroForm();
+  loadHeroSlides();
+}
+async function editHeroSlide(id){
+  const { data, error } = await sb.from('hero_slides').select('*').eq('id', id).single();
+  if (error){ $('#hFormErr').textContent = error.message; return; }
+  editingHeroId = id;
+  $('#hTitleKn').value = data.title_kn;
+  $('#hTitleEn').value = data.title_en;
+  $('#hSubKn').value = data.subtitle_kn || '';
+  $('#hSubEn').value = data.subtitle_en || '';
+  $('#hEmoji').value = data.emoji || '';
+  $('#hImg').value = data.img || '';
+  $('#hOrder').value = data.sort_order || 0;
+  $('#hFormTitle').textContent = 'Edit slide';
+  $('#hCancelEditBtn').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function cancelHeroEdit(){ clearHeroForm(); }
+function clearHeroForm(){
+  editingHeroId = null;
+  $('#hTitleKn').value = ''; $('#hTitleEn').value = '';
+  $('#hSubKn').value = ''; $('#hSubEn').value = '';
+  $('#hEmoji').value = ''; $('#hImg').value = ''; $('#hOrder').value = '0';
+  $('#hFormErr').textContent = '';
+  $('#hFormTitle').textContent = 'Add a home page slide';
+  $('#hCancelEditBtn').classList.add('hidden');
+}
+async function toggleHeroActive(id, isActive){
+  const { error } = await sb.from('hero_slides').update({ active: !isActive }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadHeroSlides();
+}
+async function deleteHeroSlide(id){
+  if (!confirm('Delete this slide permanently?')) return;
+  const { error } = await sb.from('hero_slides').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadHeroSlides();
+}
+
+/* ---------- Emergency Contacts ---------- */
+let emergencyCache = { ambulance: null, fire: null, police: null };
+const EMERGENCY_TYPES = [
+  { key: 'ambulance', icon: '🚑', label: 'Ambulance' },
+  { key: 'fire',       icon: '🚒', label: 'Fire Engine' },
+  { key: 'police',     icon: '👮', label: 'Police' }
+];
+
+async function loadEmergencyContacts(){
+  const el = $('#emergencyForm');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+  const { data, error } = await sb.from('emergency_contacts').select('*');
+  if (error){ el.innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  emergencyCache = { ambulance: null, fire: null, police: null };
+  (data || []).forEach(r => { emergencyCache[r.type] = r; });
+
+  el.innerHTML = EMERGENCY_TYPES.map(tp => {
+    const row = emergencyCache[tp.key];
+    return `<div style="margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)">
+      <label style="margin-top:0">${tp.icon} ${tp.label} — Label (Kannada)</label>
+      <input id="e_${tp.key}_kn" value="${esc(row ? row.label_kn : tp.label)}">
+      <label>${tp.icon} ${tp.label} — Label (English)</label>
+      <input id="e_${tp.key}_en" value="${esc(row ? row.label_en : tp.label)}">
+      <label>${tp.icon} ${tp.label} — Phone number</label>
+      <input id="e_${tp.key}_phone" inputmode="numeric" maxlength="10" value="${esc(row ? row.phone : '')}">
+    </div>`;
+  }).join('');
+}
+
+async function saveEmergencyContacts(){
+  const err = $('#eFormErr');
+  err.textContent = '';
+  for (const tp of EMERGENCY_TYPES){
+    const labelKn = $(`#e_${tp.key}_kn`).value.trim();
+    const labelEn = $(`#e_${tp.key}_en`).value.trim();
+    const phone = $(`#e_${tp.key}_phone`).value.trim();
+    if (phone && !/^[0-9]{10}$/.test(phone)){
+      err.textContent = `${tp.label} phone must be exactly 10 digits.`;
+      return;
+    }
+    const existing = emergencyCache[tp.key];
+    const payload = { type: tp.key, label_kn: labelKn, label_en: labelEn, phone: phone || null, active: true };
+    if (existing){
+      const { error } = await sb.from('emergency_contacts').update(payload).eq('id', existing.id);
+      if (error){ err.textContent = error.message; return; }
+    } else {
+      const { error } = await sb.from('emergency_contacts').insert(payload);
+      if (error){ err.textContent = error.message; return; }
+    }
+  }
+  loadEmergencyContacts();
+}
+
+/* ---------- Power Updates ---------- */
+let editingPowerId = null;
+
+async function loadPowerUpdates(){
+  const el = $('#powerList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+  let query = sb.from('power_updates').select('*');
+  if (adminVillage) query = query.eq('village', adminVillage);
+  const { data, error } = await query.order('created_at', { ascending: false });
+  if (error){ el.innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  if (!data.length){ el.innerHTML = '<p class="sub">No updates yet.</p>'; return; }
+  el.innerHTML = data.map(powerRowHtml).join('');
+}
+function powerRowHtml(r){
+  const isOff = r.status === 'off';
+  const badge = `<span class="badge" style="background:${isOff ? '#fdecc8' : '#e3f5e9'};color:${isOff ? '#8a5a12' : '#15533a'}">${isOff ? 'OFF' : 'ON'}</span>`;
+  return `<div class="notice-item">
+    <b>${esc(r.village)}</b> ${badge} ${r.active ? '' : '<span class="badge">Hidden</span>'}
+    <div class="meta">${isOff && r.off_time ? 'Off: ' + esc(r.off_time) + ' ' : ''}${isOff && r.expected_time ? '· Back by: ' + esc(r.expected_time) : ''}</div>
+    <div class="row">
+      <button class="btn ghost" onclick="editPower('${r.id}')">Edit</button>
+      <button class="btn ghost" onclick="togglePowerActive('${r.id}', ${r.active})">${r.active ? 'Hide' : 'Show'}</button>
+      <button class="btn danger" onclick="deletePower('${r.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+async function savePower(){
+  const village = $('#pwVillage').value;
+  const status = $('#pwStatus').value;
+  const payload = {
+    village, status,
+    off_time: $('#pwOffTime').value.trim() || null,
+    expected_time: $('#pwExpected').value.trim() || null,
+    description_kn: $('#pwDescKn').value.trim() || null,
+    description_en: $('#pwDescEn').value.trim() || null
+  };
+  const err = $('#pwFormErr');
+  err.textContent = '';
+
+  if (editingPowerId){
+    const { error } = await sb.from('power_updates').update(payload).eq('id', editingPowerId);
+    if (error){ err.textContent = error.message; return; }
+  } else {
+    const { error } = await sb.from('power_updates').insert({ ...payload, active: true });
+    if (error){ err.textContent = error.message; return; }
+  }
+  clearPowerForm();
+  loadPowerUpdates();
+}
+async function editPower(id){
+  const { data, error } = await sb.from('power_updates').select('*').eq('id', id).single();
+  if (error){ $('#pwFormErr').textContent = error.message; return; }
+  editingPowerId = id;
+  $('#pwVillage').value = data.village;
+  $('#pwStatus').value = data.status;
+  $('#pwOffTime').value = data.off_time || '';
+  $('#pwExpected').value = data.expected_time || '';
+  $('#pwDescKn').value = data.description_kn || '';
+  $('#pwDescEn').value = data.description_en || '';
+  $('#pwFormTitle').textContent = 'Edit power status';
+  $('#pwCancelEditBtn').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function cancelPowerEdit(){ clearPowerForm(); }
+function clearPowerForm(){
+  editingPowerId = null;
+  $('#pwVillage').value = 'Belagutti'; $('#pwStatus').value = 'on';
+  $('#pwOffTime').value = ''; $('#pwExpected').value = '';
+  $('#pwDescKn').value = ''; $('#pwDescEn').value = '';
+  $('#pwFormErr').textContent = '';
+  $('#pwFormTitle').textContent = 'Add / update power status';
+  $('#pwCancelEditBtn').classList.add('hidden');
+}
+async function togglePowerActive(id, isActive){
+  const { error } = await sb.from('power_updates').update({ active: !isActive }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadPowerUpdates();
+}
+async function deletePower(id){
+  if (!confirm('Delete this permanently?')) return;
+  const { error } = await sb.from('power_updates').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadPowerUpdates();
+}
+
+/* ---------- Bus Timings ---------- */
+let editingBusId = null;
+
+async function loadBusTimings(){
+  const el = $('#busList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+  let query = sb.from('bus_timings').select('*');
+  if (adminVillage) query = query.eq('village', adminVillage);
+  const { data, error } = await query.order('village', { ascending: true }).order('departure_time', { ascending: true });
+  if (error){ el.innerHTML = `<p class="err">${esc(error.message)}</p>`; return; }
+  if (!data.length){ el.innerHTML = '<p class="sub">No bus timings yet.</p>'; return; }
+  el.innerHTML = data.map(busRowHtml).join('');
+}
+function busRowHtml(r){
+  const coming = r.status === 'coming';
+  const badge = `<span class="badge" style="background:${coming ? '#e3f5e9' : '#fdecc8'};color:${coming ? '#15533a' : '#8a5a12'}">${coming ? 'Coming' : 'Not coming'}</span>`;
+  return `<div class="notice-item">
+    <b>${esc(r.bus_name)}</b> ${badge} ${r.active ? '' : '<span class="badge">Hidden</span>'}
+    <div class="meta">${esc(r.village)} → ${esc(r.to_place)} · ${esc(r.departure_time)}${r.arrival_time ? ' – ' + esc(r.arrival_time) : ''}</div>
+    <div class="row">
+      <button class="btn ghost" onclick="editBus('${r.id}')">Edit</button>
+      <button class="btn ghost" onclick="toggleBusActive('${r.id}', ${r.active})">${r.active ? 'Hide' : 'Show'}</button>
+      <button class="btn danger" onclick="deleteBus('${r.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+async function saveBus(){
+  const busName = $('#bsName').value.trim();
+  const village = $('#bsVillage').value;
+  const toPlace = $('#bsTo').value.trim();
+  const dep = $('#bsDep').value.trim();
+  const arr = $('#bsArr').value.trim();
+  const status = $('#bsStatus').value;
+  const err = $('#bsFormErr');
+  err.textContent = '';
+  if (!busName || !toPlace || !dep){ err.textContent = 'Please fill in bus name, destination and departure time.'; return; }
+
+  const payload = { bus_name: busName, village, to_place: toPlace, departure_time: dep, arrival_time: arr || null, status };
+  if (editingBusId){
+    const { error } = await sb.from('bus_timings').update(payload).eq('id', editingBusId);
+    if (error){ err.textContent = error.message; return; }
+  } else {
+    const { error } = await sb.from('bus_timings').insert({ ...payload, active: true });
+    if (error){ err.textContent = error.message; return; }
+  }
+  clearBusForm();
+  loadBusTimings();
+}
+async function editBus(id){
+  const { data, error } = await sb.from('bus_timings').select('*').eq('id', id).single();
+  if (error){ $('#bsFormErr').textContent = error.message; return; }
+  editingBusId = id;
+  $('#bsName').value = data.bus_name;
+  $('#bsVillage').value = data.village;
+  $('#bsTo').value = data.to_place;
+  $('#bsDep').value = data.departure_time;
+  $('#bsArr').value = data.arrival_time || '';
+  $('#bsStatus').value = data.status;
+  $('#bsFormTitle').textContent = 'Edit bus timing';
+  $('#bsCancelEditBtn').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function cancelBusEdit(){ clearBusForm(); }
+function clearBusForm(){
+  editingBusId = null;
+  $('#bsName').value = ''; $('#bsVillage').value = 'Belagutti';
+  $('#bsTo').value = ''; $('#bsDep').value = ''; $('#bsArr').value = '';
+  $('#bsStatus').value = 'coming';
+  $('#bsFormErr').textContent = '';
+  $('#bsFormTitle').textContent = 'Add / update a bus timing';
+  $('#bsCancelEditBtn').classList.add('hidden');
+}
+async function toggleBusActive(id, isActive){
+  const { error } = await sb.from('bus_timings').update({ active: !isActive }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadBusTimings();
+}
+async function deleteBus(id){
+  if (!confirm('Delete this permanently?')) return;
+  const { error } = await sb.from('bus_timings').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadBusTimings();
 }
 
 checkSession();
