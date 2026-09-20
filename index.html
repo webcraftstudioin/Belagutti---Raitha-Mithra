@@ -627,6 +627,11 @@ function thumb(item, i, cls){
 /* 4 scrollable images for a place. If images/name-2.jpg etc. don't exist,
    the coloured tile stays visible — nothing breaks. */
 function gallery(item){
+  /* A real uploaded photo (from Supabase Storage) is one full URL with no siblings —
+     just show it as one clean slide instead of guessing -2/-3/-4 filenames. */
+  if (item.img && /^https?:\/\//i.test(item.img)){
+    return `<div class="gal"><div class="g"><img src="${esc(item.img)}" alt="" loading="lazy"></div></div>`;
+  }
   const base = (item.img || '').replace(/\.(jpg|jpeg|png|webp)$/i, '');
   const ext  = (item.img || '').match(/\.(jpg|jpeg|png|webp)$/i)?.[0] || '.jpg';
   let out = '<div class="gal">';
