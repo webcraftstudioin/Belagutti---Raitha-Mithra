@@ -61,6 +61,9 @@ select{
 select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:480px){.grid2{grid-template-columns:1fr}}
+input[type=file]{padding:9px;font-size:13px}
+.imgPreview{max-width:100%;max-height:180px;border-radius:10px;margin-top:8px;display:none;object-fit:cover}
+.imgUploading{font-size:12.5px;color:var(--ink-soft);margin-top:6px;display:none}
 </style>
 </head>
 <body>
@@ -122,8 +125,10 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
         <label for="bodyEn">Message (English)</label>
         <textarea id="bodyEn" rows="3" placeholder="Details"></textarea>
 
-        <label for="noticeImg">Image file name (optional)</label>
-        <input id="noticeImg" placeholder="notice1.jpg">
+        <label for="noticeImgFile">Photo (optional)</label>
+        <input id="noticeImgFile" type="file" accept="image/*" onchange="previewImage('noticeImgFile','noticePreview')">
+        <img id="noticePreview" class="imgPreview">
+        <p class="imgUploading" id="noticeUploading">Uploading photo…</p>
 
         <label for="scheduledFor">Publish later (optional)</label>
         <input id="scheduledFor" type="datetime-local">
@@ -192,8 +197,10 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
         <label for="pPhone">Phone number (10 digits, no +91)</label>
         <input id="pPhone" inputmode="numeric" maxlength="10" placeholder="9916118623">
 
-        <label for="pImg">Photo file name (optional)</label>
-        <input id="pImg" placeholder="tomato.jpg">
+        <label for="pImgFile">Photo (optional)</label>
+        <input id="pImgFile" type="file" accept="image/*" onchange="previewImage('pImgFile','pPreview')">
+        <img id="pPreview" class="imgPreview">
+        <p class="imgUploading" id="pUploading">Uploading photo…</p>
 
         <p class="err" id="pFormErr"></p>
         <div class="row">
@@ -299,8 +306,10 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
           <input id="lMap" placeholder="https://maps.app.goo.gl/...">
         </div>
 
-        <label for="lImg">Photo file name (optional)</label>
-        <input id="lImg" placeholder="example.jpg">
+        <label for="lImgFile">Photo (optional)</label>
+        <input id="lImgFile" type="file" accept="image/*" onchange="previewImage('lImgFile','lPreview')">
+        <img id="lPreview" class="imgPreview">
+        <p class="imgUploading" id="lUploading">Uploading photo…</p>
 
         <p class="err" id="lFormErr"></p>
         <div class="row">
@@ -332,8 +341,10 @@ select:focus{outline:none;border-color:var(--leaf);background-color:#fff}
         </div>
         <label for="hEmoji">Emoji</label>
         <input id="hEmoji" maxlength="4" placeholder="🌾">
-        <label for="hImg">Image file name</label>
-        <input id="hImg" placeholder="hero1.jpg">
+        <label for="hImgFile">Photo</label>
+        <input id="hImgFile" type="file" accept="image/*" onchange="previewImage('hImgFile','hPreview')">
+        <img id="hPreview" class="imgPreview">
+        <p class="imgUploading" id="hUploading">Uploading photo…</p>
         <label for="hOrder">Order (0 = first)</label>
         <input id="hOrder" type="number" value="0" min="0">
 
@@ -459,6 +470,31 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+/* ---------- Real image upload (Supabase Storage) ---------- */
+function previewImage(fileInputId, imgId){
+  const input = $('#' + fileInputId);
+  const img = $('#' + imgId);
+  const file = input.files[0];
+  if (!file){ img.style.display = 'none'; img.src = ''; return; }
+  img.src = URL.createObjectURL(file);
+  img.style.display = 'block';
+}
+
+async function uploadToStorage(file, uploadingId){
+  const el = uploadingId ? $('#' + uploadingId) : null;
+  if (el) el.style.display = 'block';
+  try{
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await sb.storage.from('images').upload(path, file, { cacheControl: '3600', upsert: false });
+    if (error) throw error;
+    const { data } = sb.storage.from('images').getPublicUrl(path);
+    return data.publicUrl;
+  } finally {
+    if (el) el.style.display = 'none';
+  }
+}
+
 let editingNoticeId = null;
 
 /* ---------- Global village filter (applies across Farmers/Listings/Power/Bus) ---------- */
@@ -566,12 +602,13 @@ function rowHtml(n){
   </div>`;
 }
 
+let currentNoticeImage = null;
+
 async function saveNotice(){
   const titleKn = $('#titleKn').value.trim();
   const titleEn = $('#titleEn').value.trim();
   const bodyKn = $('#bodyKn').value.trim();
   const bodyEn = $('#bodyEn').value.trim();
-  const image = $('#noticeImg').value.trim();
   const scheduledRaw = $('#scheduledFor').value; // 'YYYY-MM-DDTHH:mm' or ''
   const err = $('#formErr');
   err.textContent = '';
@@ -579,6 +616,13 @@ async function saveNotice(){
   if (!titleKn || !titleEn || !bodyKn || !bodyEn){
     err.textContent = 'Please fill in all four fields.';
     return;
+  }
+
+  let image = currentNoticeImage;
+  const file = $('#noticeImgFile').files[0];
+  if (file){
+    try { image = await uploadToStorage(file, 'noticeUploading'); }
+    catch (e){ err.textContent = 'Photo upload failed: ' + e.message; return; }
   }
 
   const payload = {
@@ -607,7 +651,11 @@ async function editNotice(id){
   $('#titleEn').value = data.title_en;
   $('#bodyKn').value = data.body_kn;
   $('#bodyEn').value = data.body_en;
-  $('#noticeImg').value = data.image || '';
+  currentNoticeImage = data.image || null;
+  $('#noticeImgFile').value = '';
+  const prev = $('#noticePreview');
+  if (currentNoticeImage){ prev.src = currentNoticeImage; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; prev.src = ''; }
   $('#scheduledFor').value = data.scheduled_for ? toLocalInputValue(data.scheduled_for) : '';
   $('#formTitle').textContent = 'Edit notice';
   $('#cancelEditBtn').classList.remove('hidden');
@@ -624,11 +672,14 @@ function cancelEdit(){ clearForm(); }
 
 function clearForm(){
   editingNoticeId = null;
+  currentNoticeImage = null;
   $('#titleKn').value = '';
   $('#titleEn').value = '';
   $('#bodyKn').value = '';
   $('#bodyEn').value = '';
-  $('#noticeImg').value = '';
+  $('#noticeImgFile').value = '';
+  $('#noticePreview').style.display = 'none';
+  $('#noticePreview').src = '';
   $('#scheduledFor').value = '';
   $('#formErr').textContent = '';
   $('#formTitle').textContent = 'Post a new notice';
@@ -706,6 +757,8 @@ function produceRowHtml(p){
   </div>`;
 }
 
+let currentProduceImage = null;
+
 async function saveProduce(){
   const type = $('#pType').value;
   const nameKn = $('#pNameKn').value.trim();
@@ -715,7 +768,6 @@ async function saveProduce(){
   const farmerEn = $('#pFarmerEn').value.trim();
   const village = $('#pVillage').value;
   const phone = $('#pPhone').value.trim();
-  const img = $('#pImg').value.trim();
   const err = $('#pFormErr');
   err.textContent = '';
 
@@ -726,6 +778,13 @@ async function saveProduce(){
   if (!/^[0-9]{10}$/.test(phone)){
     err.textContent = 'Phone number must be exactly 10 digits.';
     return;
+  }
+
+  let img = currentProduceImage;
+  const file = $('#pImgFile').files[0];
+  if (file){
+    try { img = await uploadToStorage(file, 'pUploading'); }
+    catch (e){ err.textContent = 'Photo upload failed: ' + e.message; return; }
   }
 
   const payload = {
@@ -758,7 +817,11 @@ async function editProduce(id){
   $('#pFarmerEn').value = data.farmer_en;
   $('#pVillage').value = data.village;
   $('#pPhone').value = data.phone;
-  $('#pImg').value = data.img || '';
+  currentProduceImage = data.img || null;
+  $('#pImgFile').value = '';
+  const prev = $('#pPreview');
+  if (currentProduceImage){ prev.src = currentProduceImage; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; prev.src = ''; }
   $('#pFormTitle').textContent = 'Edit farmer listing';
   $('#pCancelEditBtn').classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -768,6 +831,7 @@ function cancelProduceEdit(){ clearProduceForm(); }
 
 function clearProduceForm(){
   editingProduceId = null;
+  currentProduceImage = null;
   $('#pType').value = 'veg';
   $('#pNameKn').value = '';
   $('#pNameEn').value = '';
@@ -776,7 +840,9 @@ function clearProduceForm(){
   $('#pFarmerEn').value = '';
   $('#pVillage').value = 'Belagutti';
   $('#pPhone').value = '';
-  $('#pImg').value = '';
+  $('#pImgFile').value = '';
+  $('#pPreview').style.display = 'none';
+  $('#pPreview').src = '';
   $('#pFormErr').textContent = '';
   $('#pFormTitle').textContent = 'Add a farmer listing';
   $('#pCancelEditBtn').classList.add('hidden');
@@ -870,6 +936,8 @@ function listingRowHtml(r){
   </div>`;
 }
 
+let currentListingImage = null;
+
 async function saveListing(){
   const category = $('#lCategory').value;
   const cfg = CATEGORY_CONFIG[category];
@@ -885,7 +953,6 @@ async function saveListing(){
   const village = $('#lVillage').value;
   const phone = $('#lPhone').value.trim();
   const map = $('#lMap').value.trim();
-  const img = $('#lImg').value.trim();
   const err = $('#lFormErr');
   err.textContent = '';
 
@@ -900,6 +967,13 @@ async function saveListing(){
   if (cfg.showMap && !map){
     err.textContent = 'Please add a Google Maps link for this temple.';
     return;
+  }
+
+  let img = currentListingImage;
+  const file = $('#lImgFile').files[0];
+  if (file){
+    try { img = await uploadToStorage(file, 'lUploading'); }
+    catch (e){ err.textContent = 'Photo upload failed: ' + e.message; return; }
   }
 
   const payload = {
@@ -947,7 +1021,11 @@ async function editListing(id){
   $('#lVillage').value = data.village;
   $('#lPhone').value = data.phone;
   $('#lMap').value = data.map_url || '';
-  $('#lImg').value = data.img || '';
+  currentListingImage = data.img || null;
+  $('#lImgFile').value = '';
+  const prev = $('#lPreview');
+  if (currentListingImage){ prev.src = currentListingImage; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; prev.src = ''; }
 
   $('#lFormTitle').textContent = 'Edit listing';
   $('#lCancelEditBtn').classList.remove('hidden');
@@ -958,6 +1036,7 @@ function cancelListingEdit(){ clearListingForm(); }
 
 function clearListingForm(){
   editingListingId = null;
+  currentListingImage = null;
   $('#lNameKn').value = '';
   $('#lNameEn').value = '';
   $('#lEmoji').value = '';
@@ -970,7 +1049,9 @@ function clearListingForm(){
   $('#lVillage').value = 'Belagutti';
   $('#lPhone').value = '';
   $('#lMap').value = '';
-  $('#lImg').value = '';
+  $('#lImgFile').value = '';
+  $('#lPreview').style.display = 'none';
+  $('#lPreview').src = '';
   $('#lFormErr').textContent = '';
   $('#lFormTitle').textContent = 'Add listing';
   $('#lCancelEditBtn').classList.add('hidden');
@@ -1011,17 +1092,25 @@ function heroRowHtml(r){
     </div>
   </div>`;
 }
+let currentHeroImage = null;
+
 async function saveHeroSlide(){
   const titleKn = $('#hTitleKn').value.trim();
   const titleEn = $('#hTitleEn').value.trim();
   const subKn = $('#hSubKn').value.trim();
   const subEn = $('#hSubEn').value.trim();
   const emoji = $('#hEmoji').value.trim() || '🌾';
-  const img = $('#hImg').value.trim();
   const order = parseInt($('#hOrder').value) || 0;
   const err = $('#hFormErr');
   err.textContent = '';
   if (!titleKn || !titleEn){ err.textContent = 'Please fill in the title in both languages.'; return; }
+
+  let img = currentHeroImage;
+  const file = $('#hImgFile').files[0];
+  if (file){
+    try { img = await uploadToStorage(file, 'hUploading'); }
+    catch (e){ err.textContent = 'Photo upload failed: ' + e.message; return; }
+  }
 
   const payload = { title_kn: titleKn, title_en: titleEn, subtitle_kn: subKn || null, subtitle_en: subEn || null, emoji, img: img || null, sort_order: order };
   if (editingHeroId){
@@ -1043,7 +1132,11 @@ async function editHeroSlide(id){
   $('#hSubKn').value = data.subtitle_kn || '';
   $('#hSubEn').value = data.subtitle_en || '';
   $('#hEmoji').value = data.emoji || '';
-  $('#hImg').value = data.img || '';
+  currentHeroImage = data.img || null;
+  $('#hImgFile').value = '';
+  const prev = $('#hPreview');
+  if (currentHeroImage){ prev.src = currentHeroImage; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; prev.src = ''; }
   $('#hOrder').value = data.sort_order || 0;
   $('#hFormTitle').textContent = 'Edit slide';
   $('#hCancelEditBtn').classList.remove('hidden');
@@ -1052,9 +1145,12 @@ async function editHeroSlide(id){
 function cancelHeroEdit(){ clearHeroForm(); }
 function clearHeroForm(){
   editingHeroId = null;
+  currentHeroImage = null;
   $('#hTitleKn').value = ''; $('#hTitleEn').value = '';
   $('#hSubKn').value = ''; $('#hSubEn').value = '';
-  $('#hEmoji').value = ''; $('#hImg').value = ''; $('#hOrder').value = '0';
+  $('#hEmoji').value = ''; $('#hImgFile').value = ''; $('#hOrder').value = '0';
+  $('#hPreview').style.display = 'none';
+  $('#hPreview').src = '';
   $('#hFormErr').textContent = '';
   $('#hFormTitle').textContent = 'Add a home page slide';
   $('#hCancelEditBtn').classList.add('hidden');
