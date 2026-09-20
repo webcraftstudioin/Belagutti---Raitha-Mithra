@@ -183,6 +183,50 @@ section{padding:22px 0 4px;scroll-margin-top:calc(var(--hdr-h) + 80px)}
   color:var(--ink-soft);font-size:13.5px;background:#fff;
 }
 
+/* ---------- Home menu ---------- */
+.homemenu{max-width:640px;margin:0 auto}
+.homemenu .grouplabel{
+  font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-soft);
+  margin:20px 4px 8px;
+}
+.homemenu .grouplabel:first-child{margin-top:4px}
+.menutile{
+  display:flex;align-items:center;gap:13px;width:100%;background:#fff;border:1px solid var(--line);
+  border-radius:16px;padding:14px 15px;margin-bottom:10px;box-shadow:var(--shadow);text-align:left;
+  transition:transform .15s ease;
+}
+.menutile:active{transform:scale(.98)}
+.menutile-ic{
+  width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:21px;
+}
+.menutile.t1 .menutile-ic{background:linear-gradient(135deg,#fdeecb,#f6dca0)}
+.menutile.t2 .menutile-ic{background:linear-gradient(135deg,#f7dedb,#eec6c1)}
+.menutile.t3 .menutile-ic{background:linear-gradient(135deg,#dfe7f6,#c8d6ee)}
+.menutile.t4 .menutile-ic{background:linear-gradient(135deg,#e2f0e6,#c7e2d0)}
+.menutile-label{font-size:15px;font-weight:600;color:var(--ink)}
+.menutile-chev{margin-left:auto;font-size:20px;color:var(--ink-soft)}
+
+/* ---------- Emergency: inline strip on Home ---------- */
+.emg-row{display:flex;flex-direction:column;gap:9px;margin-bottom:6px}
+.emg-card{
+  display:flex;align-items:center;gap:12px;background:#fff;border:1.5px solid #f6d3d0;border-radius:14px;
+  padding:11px 13px;box-shadow:var(--shadow);
+}
+.emg-ic{font-size:21px;width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;background:#fdecea}
+.emg-label{font-weight:600;font-size:14px;color:var(--ink);flex:1}
+.emg-call{
+  background:var(--chilli);color:#fff;font-weight:700;font-size:12.5px;padding:8px 13px;border-radius:10px;white-space:nowrap;
+}
+.emg-none{font-size:12px;color:var(--ink-soft)}
+
+/* ---------- Section page (single focused view) ---------- */
+.secpage{max-width:1100px;margin:0 auto}
+.backbtn{
+  display:inline-flex;align-items:center;gap:5px;background:#f1ede3;color:var(--ink);
+  padding:9px 16px;border-radius:999px;font-weight:600;font-size:13.5px;margin-bottom:6px;
+}
+.backbtn:active{background:#e6e1d2}
+
 .notice{
   background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;
   margin-bottom:10px;box-shadow:var(--shadow);
@@ -190,6 +234,20 @@ section{padding:22px 0 4px;scroll-margin-top:calc(var(--hdr-h) + 80px)}
 .notice .ndate{font-size:11.5px;color:var(--ink-soft);margin-bottom:5px}
 .notice b{font-size:14.5px;font-weight:600;line-height:1.3}
 .notice p{margin:6px 0 0;font-size:13.5px;color:var(--ink);line-height:1.65;white-space:pre-wrap}
+
+/* ---------- Village Notices: bold, attention-grabbing treatment ---------- */
+.notices-head{
+  display:flex;align-items:center;gap:10px;margin:22px 0 10px;padding:11px 15px;
+  background:linear-gradient(135deg,#fff3d6,#ffe4a3);border-radius:14px;border:1.5px solid var(--turmeric);
+}
+.notices-head-ic{font-size:23px}
+.notices-head-text{font-family:var(--head);font-weight:800;font-size:16.5px;color:#8a5a12;letter-spacing:-.2px}
+.notices-block .notice{
+  border:1.5px solid var(--turmeric);background:#fffdf7;
+}
+.notices-block .notice .ndate{font-weight:700;color:#8a5a12}
+.notices-block .notice b{font-size:15.5px;font-weight:700}
+.notices-block .notice p{font-size:14px}
 
 /* ---------- Buttons ---------- */
 .btn{
@@ -284,7 +342,7 @@ footer p{margin:5px 0}
 <body>
 
 <header>
-  <div class="brand"><span class="dot">🌾</span><span data-t="brand">ನಮ್ಮೂರ ಮಿತ್ರ</span></div>
+  <div class="brand" onclick="goHome()" style="cursor:pointer"><span class="dot">🌾</span><span data-t="brand">ನಮ್ಮೂರ ಮಿತ್ರ</span></div>
   <div class="lang" role="group" aria-label="Language">
     <button id="btnKn" class="on" onclick="setLang('kn')">ಕನ್ನಡ</button>
     <button id="btnEn" onclick="setLang('en')">EN</button>
@@ -346,6 +404,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const T = {
   brand:{kn:'ನಮ್ಮೂರ ಮಿತ್ರ',en:'Nammoora Mithra'},
   menu:{kn:'ವಿಭಾಗಗಳು',en:'Sections'},
+  backHome:{kn:'ಮುಖಪುಟ',en:'Home'},
   grpCommunity:{kn:'ಗ್ರಾಮ ಮಾಹಿತಿ',en:'Community Info'},
   grpMarket:{kn:'ಮಾರುಕಟ್ಟೆ',en:'Market'},
   grpHealth:{kn:'ಆರೋಗ್ಯ',en:'Health'},
@@ -538,11 +597,6 @@ let BUSES = [];
 let EMERGENCY = [];
 
 const SECTIONS = [
-  {id:'emergency', title:'emergT',ic:'🚑',group:'grpCommunity'},
-  {id:'notices',   title:'noticesT',ic:'📢',group:'grpCommunity'},
-  {id:'power',     title:'powerT',ic:'⚡',group:'grpCommunity'},
-  {id:'buses',     title:'busT',ic:'🚌',group:'grpCommunity'},
-
   {id:'vegetables',title:'vegT',ic:'🥕',group:'grpMarket'},
   {id:'fruits',    title:'fruitT',ic:'🍎',group:'grpMarket'},
   {id:'farming',   title:'farmT',ic:'🐑',group:'grpMarket'},
@@ -583,7 +637,10 @@ function gallery(item){
   return out + '</div>';
 }
 const kv = (label, val) => `<div class="kv"><span>${label}</span><b>${val}</b></div>`;
-const call = p => { window.location.href = 'tel:+' + p; };
+const call = p => {
+  const digits = String(p).replace(/\D/g, '');
+  window.location.href = digits.length === 10 ? ('tel:+91' + digits) : ('tel:' + digits);
+};
 
 function farmerRow(d, i, kind){
   return `<div class="frow">
@@ -614,13 +671,15 @@ function setLang(l){
   if (openSheetRef) openSheetRef();   // re-render an open sheet in the new language
 }
 
+let currentView = 'home';
+
 function buildNav(){
   const groupOrder = ['grpCommunity','grpMarket','grpHealth','grpServices'];
   $('#drawerNav').innerHTML = groupOrder.map(g => {
     const items = SECTIONS.filter(s => s.group === g);
     if (!items.length) return '';
     return `<div class="grouplabel">${t(g)}</div>` +
-      items.map(s => `<a href="#${s.id}" onclick="closeAll()"><span class="ic">${s.ic}</span>${t(s.title)}</a>`).join('');
+      items.map(s => `<a href="javascript:void(0)" onclick="goToSection('${s.id}')"><span class="ic">${s.ic}</span>${t(s.title)}</a>`).join('');
   }).join('');
 }
 function openDrawer(){ $('#drawer').classList.add('on'); $('#scrim').classList.add('on'); }
@@ -631,6 +690,18 @@ function closeAll(){
   openSheetRef = null;
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+function goHome(){
+  currentView = 'home';
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function goToSection(id){
+  currentView = id;
+  closeAll();
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 /* =====================================================================
    5. HERO CAROUSEL
@@ -788,22 +859,6 @@ function sectionShell(id, titleKey, subKey, badge){
   </section>`;
 }
 
-function noticesShell(){
-  return `<section id="notices">
-    <div class="shead"><h2>${t('noticesT')}</h2></div>
-    <p class="sub">${t('noticesS')}</p>
-    <div id="noticesList"><p class="hint">${t('noticesLoading')}</p></div>
-  </section>`;
-}
-
-function emergencyShell(){
-  return `<section id="emergency">
-    <div class="shead"><h2>${t('emergT')}</h2></div>
-    <p class="sub">${t('emergS')}</p>
-    <div id="emergencyBoard" class="grid"></div>
-  </section>`;
-}
-
 function workersShell(){
   const groups = [
     ['w-coconut','wCoconutT'],['w-furniture','wFurnitureT'],
@@ -819,58 +874,87 @@ function workersShell(){
   </section>`;
 }
 
-function powerShell(){
-  return `<section id="power">
-    <div class="shead"><h2>${t('powerT')}</h2></div>
-    <p class="sub">${t('powerS')}</p>
-    <div id="powerBoard"></div>
-  </section>`;
-}
-
-function busShell(){
-  return `<section id="buses">
-    <div class="shead"><h2>${t('busT')}</h2></div>
-    <p class="sub">${t('busS')}</p>
-    <div id="busBoard"></div>
-  </section>`;
-}
-
 function renderAll(){
-  $('#main').innerHTML =
-    emergencyShell() +
-    noticesShell() +
-    sectionShell('vegetables','vegT','vegS', t('allVillages')) +
-    sectionShell('fruits','fruitT','fruitS', t('allVillages')) +
-    sectionShell('farming','farmT','farmS', t('allVillages')) +
-    sectionShell('stationary','statT','statS', t('onlyBel')) +
-    sectionShell('hotels','hotelT','hotelS', t('onlyBel')) +
-    sectionShell('temples','templeT','templeS', t('onlyBel')) +
-    sectionShell('hospital','hospT','hospS', t('onlyBel')) +
-    sectionShell('vet','vetT','vetS', t('allVillages')) +
-    sectionShell('organic','organicT','organicS', t('allVillages')) +
-    workersShell() +
-    powerShell() +
-    busShell();
+  const heroEl = document.querySelector('.hero');
+  if (heroEl) heroEl.style.display = currentView === 'home' ? '' : 'none';
 
-  fill('vegetables', VEG.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'veg', produceCard);
-  fill('fruits', FRUIT.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'fruit', produceCard);
-  fill('farming', FARMS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'farm', placeCard);
-  fill('stationary', STATIONARY.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'stat', placeCard);
-  fill('hotels', HOTELS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hotel', placeCard);
-  fill('temples', TEMPLES.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'temple', placeCard);
-  fill('hospital', HOSPITALS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hosp', placeCard);
-  fill('vet', VET.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'vet', placeCard);
-  fill('organic', ORGANIC.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'organic', placeCard);
-  fill('w-coconut', W_COCONUT.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_coconut', placeCard);
-  fill('w-furniture', W_FURNITURE.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_furniture', placeCard);
-  fill('w-tractor', W_TRACTOR.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_tractor', placeCard);
-  fill('w-taxi', W_TAXI.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_taxi', placeCard);
-  fill('w-borewell', W_BOREWELL.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_borewell', placeCard);
+  if (currentView === 'home'){
+    $('#main').innerHTML = homeMenuHtml();
+    return;
+  }
 
-  renderNotices();
-  renderEmergency();
-  renderPower();
-  renderBuses();
+  $('#main').innerHTML = sectionPage(sectionHtmlFor(currentView));
+  fillSection(currentView);
+}
+
+function sectionHtmlFor(id){
+  switch (id){
+    case 'vegetables': return sectionShell('vegetables','vegT','vegS', t('allVillages'));
+    case 'fruits':     return sectionShell('fruits','fruitT','fruitS', t('allVillages'));
+    case 'farming':    return sectionShell('farming','farmT','farmS', t('allVillages'));
+    case 'stationary': return sectionShell('stationary','statT','statS', t('onlyBel'));
+    case 'hotels':     return sectionShell('hotels','hotelT','hotelS', t('onlyBel'));
+    case 'temples':    return sectionShell('temples','templeT','templeS', t('onlyBel'));
+    case 'hospital':   return sectionShell('hospital','hospT','hospS', t('onlyBel'));
+    case 'vet':        return sectionShell('vet','vetT','vetS', t('allVillages'));
+    case 'organic':    return sectionShell('organic','organicT','organicS', t('allVillages'));
+    case 'workers':    return workersShell();
+    default:           return '';
+  }
+}
+
+function fillSection(id){
+  switch (id){
+    case 'vegetables': fill('vegetables', VEG.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'veg', produceCard); break;
+    case 'fruits':     fill('fruits', FRUIT.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'fruit', produceCard); break;
+    case 'farming':    fill('farming', FARMS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'farm', placeCard); break;
+    case 'stationary': fill('stationary', STATIONARY.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'stat', placeCard); break;
+    case 'hotels':     fill('hotels', HOTELS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hotel', placeCard); break;
+    case 'temples':    fill('temples', TEMPLES.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'temple', placeCard); break;
+    case 'hospital':   fill('hospital', HOSPITALS.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'hosp', placeCard); break;
+    case 'vet':        fill('vet', VET.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'vet', placeCard); break;
+    case 'organic':    fill('organic', ORGANIC.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'organic', placeCard); break;
+    case 'workers':
+      fill('w-coconut', W_COCONUT.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_coconut', placeCard);
+      fill('w-furniture', W_FURNITURE.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_furniture', placeCard);
+      fill('w-tractor', W_TRACTOR.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_tractor', placeCard);
+      fill('w-taxi', W_TAXI.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_taxi', placeCard);
+      fill('w-borewell', W_BOREWELL.map((d,i)=>({d,i})).filter(r=>inLoc(r.d)), 'w_borewell', placeCard);
+      break;
+  }
+}
+
+function sectionPage(html){
+  return `<div class="secpage">
+    <button class="backbtn" onclick="goHome()">‹ ${t('backHome')}</button>
+    ${html}
+  </div>`;
+}
+
+function homeMenuHtml(){
+  const groupOrder = ['grpMarket','grpHealth','grpServices'];
+  const colorClass = i => ['t1','t2','t3','t4'][i % 4];
+  let n = 0;
+  return `<div class="homemenu">
+    ${homeEmergencyHtml()}
+    ${homeNoticesHtml()}
+    ${homePowerHtml()}
+    ${homeBusHtml()}
+    ${groupOrder.map(g => {
+      const items = SECTIONS.filter(s => s.group === g);
+      if (!items.length) return '';
+      const tiles = items.map(s => {
+        const html = `<button class="menutile ${colorClass(n)}" onclick="goToSection('${s.id}')">
+          <span class="menutile-ic">${s.ic}</span>
+          <span class="menutile-label">${t(s.title)}</span>
+          <span class="menutile-chev">›</span>
+        </button>`;
+        n++;
+        return html;
+      }).join('');
+      return `<div class="grouplabel">${t(g)}</div>${tiles}`;
+    }).join('')}
+  </div>`;
 }
 
 function fill(id, rows, kind, tpl){
@@ -879,70 +963,79 @@ function fill(id, rows, kind, tpl){
   el.innerHTML = rows.map(r => tpl(r.d, r.i, kind)).join('');
 }
 
-/* ---------- Board-style sections (not detail-sheet driven) ---------- */
-function renderEmergency(){
-  const el = $('#emergencyBoard');
-  if (!el) return;
-  const types = [
-    { key:'ambulance', icon:'🚑', labelKey:'ambulance' },
-    { key:'fire',       icon:'🚒', labelKey:'fire' },
-    { key:'police',     icon:'👮', labelKey:'police' }
-  ];
-  el.innerHTML = types.map(tp => {
+/* ---------- Emergency: always visible directly on the home screen ---------- */
+const EMERGENCY_DISPLAY = [
+  { key:'ambulance', icon:'🚑', labelKey:'ambulance' },
+  { key:'fire',       icon:'🚒', labelKey:'fire' },
+  { key:'police',     icon:'👮', labelKey:'police' }
+];
+function homeEmergencyHtml(){
+  const cards = EMERGENCY_DISPLAY.map(tp => {
     const row = EMERGENCY.find(e => e.type === tp.key);
     const label = row ? (lang === 'kn' ? row.label_kn : row.label_en) : t(tp.labelKey);
-    return `<div class="card" style="padding:14px">
-      <div style="font-size:32px;text-align:center;margin-bottom:6px">${tp.icon}</div>
-      <div class="cbody" style="padding:0;text-align:center">
-        <b>${esc(label)}</b>
-        ${row && row.phone
-          ? `<div class="btnrow" style="margin-top:10px"><button class="btn solid" onclick="call('${row.phone}')">📞 ${esc(row.phone)}</button></div>`
-          : `<p class="who" style="margin-top:8px">${t('noneHere')}</p>`}
-      </div>
+    return `<div class="emg-card">
+      <span class="emg-ic">${tp.icon}</span>
+      <span class="emg-label">${esc(label)}</span>
+      ${row && row.phone
+        ? `<button class="emg-call" onclick="call('${row.phone}')">📞 ${esc(row.phone)}</button>`
+        : `<span class="emg-none">${t('noneHere')}</span>`}
     </div>`;
   }).join('');
+  return `<div class="grouplabel" style="margin-top:4px">${t('emergT')}</div>
+    <div class="emg-row">${cards}</div>`;
 }
 
-function renderPower(){
-  const el = $('#powerBoard');
-  if (!el) return;
+/* ---------- Notices, Power, Buses: also shown directly on the home screen ---------- */
+function homeNoticesHtml(){
+  const body = noticesCache.length
+    ? noticesCache.map(noticeCard).join('')
+    : `<div class="empty">${t('noticesEmpty')}</div>`;
+  return `
+    <div class="notices-head">
+      <span class="notices-head-ic">📢</span>
+      <span class="notices-head-text">${t('noticesT')}</span>
+    </div>
+    <div class="notices-block">${body}</div>`;
+}
+
+function homePowerHtml(){
   const rows = POWER.filter(r => inLoc(r));
-  if (!rows.length){ el.innerHTML = `<div class="empty">${t('noneHere')}</div>`; return; }
-  el.innerHTML = rows.map(r => {
-    const desc = (lang === 'kn' ? r.description_kn : r.description_en) || '';
-    const isOff = r.status === 'off';
-    return `<div class="notice">
-      <b>📍 ${esc(vName(r.village))}</b>
-      <p style="margin:6px 0 0;font-weight:600;color:${isOff ? 'var(--chilli)' : 'var(--leaf)'}">
-        ${isOff ? t('powerOff') : t('powerOn')}
-      </p>
-      ${isOff && r.off_time ? `<p style="margin:4px 0 0;font-size:13px;color:var(--ink-soft)">${t('powerOffTime')}: ${esc(r.off_time)}</p>` : ''}
-      ${isOff && r.expected_time ? `<p style="margin:2px 0 0;font-size:13px;color:var(--ink-soft)">${t('powerExpected')}: ${esc(r.expected_time)}</p>` : ''}
-      ${desc ? `<p style="margin:6px 0 0;font-size:13px">${esc(desc)}</p>` : ''}
-    </div>`;
-  }).join('');
+  const body = rows.length ? rows.map(powerCard).join('') : `<div class="empty">${t('noneHere')}</div>`;
+  return `<div class="grouplabel" style="margin-top:20px">${t('powerT')}</div>${body}`;
+}
+function powerCard(r){
+  const desc = (lang === 'kn' ? r.description_kn : r.description_en) || '';
+  const isOff = r.status === 'off';
+  return `<div class="notice">
+    <b>📍 ${esc(vName(r.village))}</b>
+    <p style="margin:6px 0 0;font-weight:600;color:${isOff ? 'var(--chilli)' : 'var(--leaf)'}">
+      ${isOff ? t('powerOff') : t('powerOn')}
+    </p>
+    ${isOff && r.off_time ? `<p style="margin:4px 0 0;font-size:13px;color:var(--ink-soft)">${t('powerOffTime')}: ${esc(r.off_time)}</p>` : ''}
+    ${isOff && r.expected_time ? `<p style="margin:2px 0 0;font-size:13px;color:var(--ink-soft)">${t('powerExpected')}: ${esc(r.expected_time)}</p>` : ''}
+    ${desc ? `<p style="margin:6px 0 0;font-size:13px">${esc(desc)}</p>` : ''}
+  </div>`;
 }
 
-function renderBuses(){
-  const el = $('#busBoard');
-  if (!el) return;
+function homeBusHtml(){
   const rows = BUSES.filter(r => inLoc(r));
-  if (!rows.length){ el.innerHTML = `<div class="empty">${t('noneHere')}</div>`; return; }
-  el.innerHTML = rows.map(r => {
-    const coming = r.status === 'coming';
-    return `<div class="notice">
-      <b>🚌 ${esc(r.bus_name)}</b>
-      <p style="margin:6px 0 0;font-weight:600;color:${coming ? 'var(--leaf)' : 'var(--chilli)'}">
-        ${coming ? t('busComing') : t('busNotComing')}
-      </p>
-      <p style="margin:4px 0 0;font-size:13px">
-        ${t('busFrom')}: ${esc(vName(r.village))} → ${t('busTo')}: ${esc(r.to_place)}
-      </p>
-      <p style="margin:2px 0 0;font-size:13px;color:var(--ink-soft)">
-        ${t('busDep')}: ${esc(r.departure_time)}${r.arrival_time ? ` · ${t('busArr')}: ${esc(r.arrival_time)}` : ''}
-      </p>
-    </div>`;
-  }).join('');
+  const body = rows.length ? rows.map(busCard).join('') : `<div class="empty">${t('noneHere')}</div>`;
+  return `<div class="grouplabel" style="margin-top:20px">${t('busT')}</div>${body}`;
+}
+function busCard(r){
+  const coming = r.status === 'coming';
+  return `<div class="notice">
+    <b>🚌 ${esc(r.bus_name)}</b>
+    <p style="margin:6px 0 0;font-weight:600;color:${coming ? 'var(--leaf)' : 'var(--chilli)'}">
+      ${coming ? t('busComing') : t('busNotComing')}
+    </p>
+    <p style="margin:4px 0 0;font-size:13px">
+      ${t('busFrom')}: ${esc(vName(r.village))} → ${t('busTo')}: ${esc(r.to_place)}
+    </p>
+    <p style="margin:2px 0 0;font-size:13px;color:var(--ink-soft)">
+      ${t('busDep')}: ${esc(r.departure_time)}${r.arrival_time ? ` · ${t('busArr')}: ${esc(r.arrival_time)}` : ''}
+    </p>
+  </div>`;
 }
 
 function produceCard(d, i, kind){
@@ -1724,17 +1817,7 @@ async function loadNotices(){
     console.error('Failed to load notices:', e);
     noticesCache = [];
   }
-  renderNotices();
-}
-
-function renderNotices(){
-  const el = $('#noticesList');
-  if (!el) return; // section not in the DOM yet
-  if (!noticesCache.length){
-    el.innerHTML = `<div class="empty">${t('noticesEmpty')}</div>`;
-    return;
-  }
-  el.innerHTML = noticesCache.map(noticeCard).join('');
+  renderAll();
 }
 
 function noticeCard(n){
