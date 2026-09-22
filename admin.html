@@ -108,6 +108,7 @@ input[type=file]{padding:9px;font-size:13px}
       <button id="tabBtnEmergency" onclick="switchTab('emergency')">🚑 Emergency</button>
       <button id="tabBtnPower" onclick="switchTab('power')">⚡ Power</button>
       <button id="tabBtnBus" onclick="switchTab('bus')">🚌 Bus</button>
+      <button id="tabBtnRx" onclick="switchTab('rx')">💊 Prescriptions</button>
     </div>
 
     <!-- NOTICES TAB -->
@@ -458,6 +459,29 @@ input[type=file]{padding:9px;font-size:13px}
         <div id="busList"><p class="sub">Loading…</p></div>
       </div>
     </div>
+
+    <!-- PRESCRIPTIONS TAB -->
+    <div id="tabRx" class="hidden">
+      <div class="card">
+        <h2>Prescription requests</h2>
+        <p class="sub">Photos are private — only visible here, after you click "View prescription".</p>
+
+        <label for="rxHospitalFilter">Filter by hospital / medical shop</label>
+        <select id="rxHospitalFilter" onchange="loadPrescriptions()">
+          <option value="">All hospitals/shops</option>
+        </select>
+
+        <label for="rxStatusFilter">Filter by status</label>
+        <select id="rxStatusFilter" onchange="loadPrescriptions()">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="available">Available</option>
+          <option value="not_available">Not available</option>
+        </select>
+
+        <div id="rxList" style="margin-top:14px"><p class="sub">Loading…</p></div>
+      </div>
+    </div>
   </div>
 </main>
 
@@ -466,6 +490,7 @@ input[type=file]{padding:9px;font-size:13px}
 const SUPABASE_URL = 'https://yzffffubsskcjmulxpir.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl6ZmZmZnVic3NrY2ptdWx4cGlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MzEwNzAsImV4cCI6MjEwNTMwNzA3MH0._XP5FN_9kseg0A3neJUCbVjD4XeeCU5CuN7w_ZYtOX8';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const call = p => { const digits = String(p).replace(/\D/g, ''); window.location.href = digits.length === 10 ? ('tel:+91' + digits) : ('tel:' + digits); };
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -497,7 +522,7 @@ async function uploadToStorage(file, uploadingId){
 
 let editingNoticeId = null;
 
-/* ---------- Global village filter (applies across Farmers/Listings/Power/Bus) ---------- */
+/* ---------- Global village filter (applies across Farmers/Listings/Power/Bus/Prescriptions) ---------- */
 let adminVillage = '';
 function onAdminVillageChange(){
   adminVillage = $('#adminVillageFilter').value;
@@ -505,11 +530,12 @@ function onAdminVillageChange(){
   loadListingList();
   loadPowerUpdates();
   loadBusTimings();
+  loadPrescriptions();
 }
 let editingProduceId = null;
 
 /* ---------- Tabs ---------- */
-const TAB_IDS = ['notices','farmers','listings','home','emergency','power','bus'];
+const TAB_IDS = ['notices','farmers','listings','home','emergency','power','bus','rx'];
 function switchTab(name){
   TAB_IDS.forEach(id => {
     $('#tab' + capitalize(id)).classList.toggle('hidden', id !== name);
@@ -520,6 +546,7 @@ function switchTab(name){
   if (name === 'emergency') loadEmergencyContacts();
   if (name === 'power') loadPowerUpdates();
   if (name === 'bus') loadBusTimings();
+  if (name === 'rx'){ loadRxHospitalOptions(); loadPrescriptions(); }
 }
 function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
 
@@ -1387,6 +1414,70 @@ async function deleteBus(id){
   const { error } = await sb.from('bus_timings').delete().eq('id', id);
   if (error){ alert(error.message); return; }
   loadBusTimings();
+}
+
+/* ---------- Prescriptions portal ---------- */
+async function loadRxHospitalOptions(){
+  const sel = $('#rxHospitalFilter');
+  const { data, error } = await sb.from('listings').select('id,name_en').eq('category', 'hospital').order('name_en', { ascending: true });
+  if (error) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All hospitals/shops</option>' +
+    (data || []).map(h => `<option value="${h.id}">${esc(h.name_en)}</option>`).join('');
+  sel.value = current;
+}
+
+async function loadPrescriptions(){
+  const el = $('#rxList');
+  el.innerHTML = '<p class="sub">Loading…</p>';
+
+  let query = sb.from('prescriptions').select('*').order('created_at', { ascending: false });
+  const hosp = $('#rxHospitalFilter') ? $('#rxHospitalFilter').value : '';
+  const status = $('#rxStatusFilter') ? $('#rxStatusFilter').value : '';
+  if (hosp) query = query.eq('hospital_listing_id', hosp);
+  if (status) query = query.eq('status', status);
+  if (adminVillage) query = query.eq('hospital_village', adminVillage);
+
+  const { data, error } = await query;
+  if (error){ el.innerHTML = `<p class="err">Could not load prescriptions: ${esc(error.message)}</p>`; return; }
+  if (!data.length){ el.innerHTML = '<p class="sub">No prescription requests yet.</p>'; return; }
+  el.innerHTML = data.map(rxRowHtml).join('');
+}
+
+function rxRowHtml(r){
+  const date = new Date(r.created_at).toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const meta = { pending:['Pending','#8a5a12','#fdecc8'], available:['Available','#15533a','#e3f5e9'], not_available:['Not available','#c4382c','#fbe4e1'] }[r.status] || ['—','#666','#eee'];
+  return `<div class="notice-item">
+    <b>${esc(r.patient_name)}</b> <span class="badge" style="background:${meta[2]};color:${meta[1]}">${meta[0]}</span>
+    <div class="meta">${esc(date)} · ${esc(r.hospital_name_en || '')} · Age ${esc(r.age || '-')} · ${esc(r.patient_phone)}</div>
+    <p>${esc(r.issue || '')}${r.medicine_name ? ' · Needs: ' + esc(r.medicine_name) : ''}</p>
+    <div class="row">
+      <button class="btn ghost" onclick="viewPrescription('${r.prescription_path}')">View prescription</button>
+      <button class="btn ghost" onclick="call('${r.patient_phone}')">Call patient</button>
+      <button class="btn primary" onclick="setRxStatus('${r.id}','available')">Mark available</button>
+      <button class="btn danger" onclick="setRxStatus('${r.id}','not_available')">Mark not available</button>
+      <button class="btn ghost" onclick="deleteRx('${r.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+async function viewPrescription(path){
+  const { data, error } = await sb.storage.from('prescriptions').createSignedUrl(path, 3600);
+  if (error){ alert('Could not open prescription: ' + error.message); return; }
+  window.open(data.signedUrl, '_blank');
+}
+
+async function setRxStatus(id, status){
+  const { error } = await sb.from('prescriptions').update({ status }).eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadPrescriptions();
+}
+
+async function deleteRx(id){
+  if (!confirm('Delete this prescription request permanently?')) return;
+  const { error } = await sb.from('prescriptions').delete().eq('id', id);
+  if (error){ alert(error.message); return; }
+  loadPrescriptions();
 }
 
 checkSession();
