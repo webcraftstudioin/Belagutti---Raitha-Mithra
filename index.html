@@ -540,6 +540,13 @@ const T = {
   photoAttached:{kn:'📎 ಫೋಟೋ ಆಯ್ಕೆಯಾಗಿದೆ — ಕೆಳಗಿನ ಹಂತ ಅನುಸರಿಸಿ',en:'📎 Photo selected — follow the steps below'},
   sendMed:{kn:'ಮೆಡಿಕಲ್‌ಗೆ ಕಳುಹಿಸಿ',en:'Send to medical shop'},
 
+  rxPhotoLabel:{kn:'ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ (ಅಗತ್ಯ)',en:'Upload prescription photo (required)'},
+  rxUploading:{kn:'ಅಪ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ…',en:'Uploading…'},
+  rxNeedPhoto:{kn:'ದಯವಿಟ್ಟು ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಫೋಟೋ ಆಯ್ಕೆ ಮಾಡಿ.',en:'Please choose a prescription photo.'},
+  rxSuccessTitle:{kn:'ಕಳುಹಿಸಲಾಗಿದೆ ✅',en:'Submitted ✅'},
+  rxSuccessMsg:{kn:'ನಿಮ್ಮ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಮೆಡಿಕಲ್ ಅಂಗಡಿಗೆ ಕಳುಹಿಸಲಾಗಿದೆ. ಔಷಧಿ ಲಭ್ಯವಿದೆಯೇ ಎಂದು ಖಚಿತಪಡಿಸಲು ಅವರು ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತಾರೆ.',en:'Your prescription has been sent to the medical shop. They will call you to confirm whether the medicine is available.'},
+  rxClose:{kn:'ಮುಚ್ಚಿ',en:'Close'},
+
   farmReqTitle:{kn:'ವಿಚಾರಣೆ ಕಳುಹಿಸಿ',en:'Send an enquiry'},
   place:{kn:'ಸ್ಥಳ',en:'Place'},
   placePh:{kn:'ನಿಮ್ಮ ಊರು ಅಥವಾ ಗುರುತು',en:'Your village or landmark'},
@@ -1137,7 +1144,7 @@ function openDetail(kind, i){
       ${kv(t('doctor'), esc(L(d.doctor)) + ' · ' + esc(L(d.desig)))}
       ${kv(t('about'), esc(L(d.about)))}
       <div class="btnrow">
-        <button class="btn wa" onclick="openMedicine(${i})">💊 ${t('getMed')}</button>
+        <button class="btn solid" onclick="openPrescriptionForm(${i})">💊 ${t('getMed')}</button>
         <button class="btn call" onclick="call('${d.phone}')">📞 ${t('call')}</button>
       </div>`;
   }
@@ -1311,40 +1318,83 @@ function sendOrder(){
 }
 
 /* =====================================================================
-   10. MEDICINE FORM  →  WhatsApp
+   10. MEDICINE / PRESCRIPTION FORM  →  stored on the site, reviewed in admin
    ===================================================================== */
-let medCtx = null;
-function openMedicine(i){
+let rxHospital = null;
+function openPrescriptionForm(i){
   const d = HOSPITALS[i];
-  medCtx = d;
-  const redraw = () => openMedicine(i);
+  rxHospital = d;
+  const redraw = () => openPrescriptionForm(i);
   showSheet(`
     <h3>${t('medTitle')}</h3>
     <p class="meta">${esc(L(d))} · ${esc(L(d.doctor))}</p>
 
-    <label class="f" for="mName">${t('yourName')}</label>
-    <input id="mName" class="inp" autocomplete="name">
+    <label class="f" for="rxName">${t('yourName')}</label>
+    <input id="rxName" class="inp" autocomplete="name">
 
-    <label class="f" for="mAge">${t('age')}</label>
-    <input id="mAge" class="inp" inputmode="numeric" maxlength="3">
+    <label class="f" for="rxPhone">${t('phone')}</label>
+    <input id="rxPhone" class="inp" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel">
 
-    <label class="f" for="mIssue">${t('issue')}</label>
-    <input id="mIssue" class="inp" placeholder="${t('issuePh')}">
+    <label class="f" for="rxAge">${t('age')}</label>
+    <input id="rxAge" class="inp" inputmode="numeric" maxlength="3">
 
-    <label class="f" for="mMed">${t('medName')}</label>
-    <input id="mMed" class="inp">
+    <label class="f" for="rxIssue">${t('issue')}</label>
+    <input id="rxIssue" class="inp" placeholder="${t('issuePh')}">
 
-    <label class="f">${t('presc')}</label>
-    <input id="mPic" class="inp" type="file" accept="image/*" onchange="picPicked()">
-    <div id="picOk"></div>
+    <label class="f" for="rxMed">${t('medName')}</label>
+    <input id="rxMed" class="inp">
 
-    <p class="err" id="mErr"></p>
-    <div class="btnrow">
-      <button class="btn wa" onclick="sendMedicine()">🟢 ${t('sendMed')}</button>
-      <button class="btn call" onclick="call('${d.medPhone || d.phone}')">📞 ${t('callShop')}</button>
-    </div>
+    <label class="f">${t('rxPhotoLabel')}</label>
+    <input id="rxFile" class="inp" type="file" accept="image/*">
+    <p class="note" id="rxUploadingNote" style="display:none">${t('rxUploading')}</p>
+
+    <p class="err" id="rxErr"></p>
+    <div class="btnrow"><button class="btn solid" onclick="submitPrescription()">💊 ${t('sendReq')}</button></div>
   `, redraw);
 }
+
+async function submitPrescription(){
+  const n = $('#rxName').value.trim(), p = $('#rxPhone').value.trim(),
+        a = $('#rxAge').value.trim(), is = $('#rxIssue').value.trim(),
+        m = $('#rxMed').value.trim();
+  const err = $('#rxErr');
+  const file = $('#rxFile').files[0];
+
+  if (!n || !p || !a || !is){ err.textContent = t('eFill'); return; }
+  if (!/^[0-9]{10}$/.test(p)){ err.textContent = t('ePhone'); return; }
+  if (!/^[0-9]{1,3}$/.test(a)){ err.textContent = t('eAge'); return; }
+  if (!file){ err.textContent = t('rxNeedPhoto'); return; }
+  err.textContent = '';
+
+  const note = $('#rxUploadingNote');
+  note.style.display = 'block';
+  try{
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: upErr } = await sb.storage.from('prescriptions').upload(path, file, { cacheControl: '3600', upsert: false });
+    if (upErr) throw upErr;
+
+    const { error: insErr } = await sb.from('prescriptions').insert({
+      hospital_listing_id: rxHospital.id || null,
+      hospital_name_kn: rxHospital.kn, hospital_name_en: rxHospital.en,
+      hospital_village: rxHospital.loc,
+      patient_name: n, patient_phone: p, age: a, issue: is, medicine_name: m || null,
+      prescription_path: path, status: 'pending'
+    });
+    if (insErr) throw insErr;
+
+    showSheet(`
+      <h3>${t('rxSuccessTitle')}</h3>
+      <p style="margin-top:10px;line-height:1.6">${t('rxSuccessMsg')}</p>
+      <div class="btnrow"><button class="btn solid" onclick="closeAll()">${t('rxClose')}</button></div>
+    `, null);
+  } catch (e){
+    err.textContent = (lang === 'kn' ? 'ದೋಷ: ' : 'Error: ') + e.message;
+  } finally {
+    note.style.display = 'none';
+  }
+}
+
 function showCallTips(phone){
   const row = $('#statCallRow');
   if (row) row.style.display = 'none';
@@ -1647,33 +1697,11 @@ function attachAlert(){
       <button type="button" class="copybtn" onclick="copyReminder(this)">📋 ${t('copyNote')}</button>
     </div>`;
 }
-function picPicked(){
-  if (!$('#mPic').files.length) return;
-  $('#picOk').innerHTML = attachAlert();
-}
 function copyReminder(btn){
   const text = `${t('prescStep1')}. ${t('prescStep2')}.`;
   const done = () => { btn.textContent = '✓ ' + t('copied'); setTimeout(() => btn.innerHTML = `📋 ${t('copyNote')}`, 1800); };
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(done);
   else done();
-}
-function sendMedicine(){
-  const n = $('#mName').value.trim(), a = $('#mAge').value.trim(),
-        is = $('#mIssue').value.trim(), m = $('#mMed').value.trim(),
-        err = $('#mErr');
-  if (!n || !a || !is || !m){ err.textContent = t('eFill'); return; }
-  if (!/^[0-9]{1,3}$/.test(a)){ err.textContent = t('eAge'); return; }
-  err.textContent = '';
-
-  const lines = [
-    '💊 ' + t('medTitle'),
-    `${t('yourName')}: ${n}`,
-    `${t('age')}: ${a}`,
-    `${t('issue')}: ${is}`,
-    `${t('medName')}: ${m}`,
-    `🏥 ${L(medCtx)}`
-  ];
-  window.open('https://wa.me/' + (medCtx.medPhone || medCtx.phone) + '?text=' + encodeURIComponent(lines.join('\n')), '_blank');
 }
 
 /* =====================================================================
@@ -1722,7 +1750,7 @@ function rowToTemple(r){
     pooja:{ kn:r.role_kn, en:r.role_en }, about:{ kn:r.about_kn, en:r.about_en } };
 }
 function rowToHospitalListing(r){
-  return { kn:r.name_kn, en:r.name_en, e:r.emoji, loc:r.village, img:r.img || '', phone:r.phone, medPhone:r.phone,
+  return { id:r.id, kn:r.name_kn, en:r.name_en, e:r.emoji, loc:r.village, img:r.img || '', phone:r.phone, medPhone:r.phone,
     type:'private', doctor:{ kn:r.owner_kn, en:r.owner_en }, desig:{ kn:r.role_kn, en:r.role_en }, about:{ kn:r.about_kn, en:r.about_en } };
 }
 function rowToFarm(r){
